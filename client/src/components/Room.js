@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRecoilValue } from "recoil";
 import {
   fontSizeState,
@@ -8,22 +8,27 @@ import {
 import Editor from "../utils/Editor";
 
 import RoomHeader from "./RoomHeader";
+import Sidebar from "./Sidebar";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
   const theme = useRecoilValue(themeState);
   const fontSize = useRecoilValue(fontSizeState);
+  const [mainEditorBody, SetMainEditorBody] = useState("");
+  const [input, setInput] = useState("");
+  const [output, setOutput] = useState("");
   return (
-    <div className="w-full h-screen flex flex-col bg-[#272A37]">
+    <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
       <RoomHeader />
+      <Sidebar />
       <div className="grid grid-cols-2">
         <div className="">
           <Editor
             theme={theme}
-            width={window.innerWidth}
-            // @ts-ignore
+            width={"100%"}
+            height={"80vh"}
             language={language}
-            body={""}
-            setBody={""}
+            body={mainEditorBody}
+            setBody={SetMainEditorBody}
             fontSize={fontSize}
           />
         </div>
@@ -33,9 +38,9 @@ const Room = () => {
             <Editor
               theme={theme}
               language={""}
-              body={""}
-              setBody={""}
-              height={"35vh"}
+              body={input}
+              setBody={setInput}
+              height={"40vh"}
               width={1000}
               fontSize={fontSize}
             />
@@ -44,10 +49,10 @@ const Room = () => {
             <Editor
               theme={theme}
               language={""}
-              body={""}
-              setBody={""}
+              body={output}
+              setBody={setOutput}
               readOnly={true}
-              height={"39vh"}
+              height={"40vh"}
               width={1000}
               fontSize={fontSize}
             />

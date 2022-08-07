@@ -12,12 +12,16 @@ import {
 } from "../atoms/editorOptionsModal";
 const langauges = Object.keys(allLangauges);
 const themes = [
-  "monokai",
   "dracula",
-  "tomorrow",
-  "kuroir",
-  "twilight",
+  "github",
+  "solarized_dark",
+  "monokai",
+  "eclipse",
+  "tomorrow_night",
+  "tomorrow_night_blue",
   "xcode",
+  "ambiance",
+  "solarized_light",
 ];
 const fontSizes = [
   "8",
@@ -39,7 +43,7 @@ const RoomHeader = () => {
   const [theme, setTheme] = useRecoilState(themeState);
   const [fontSize, setFontSize] = useRecoilState(fontSizeState);
   return (
-    <div className="flex text-[#5b5b5b] space-x-16 px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#1B1C29]">
+    <div className="flex text-[#5b5b5b] space-x-16 h-[30rem] px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
       <div className="w-[10rem]">
         <FormControl fullWidth>
           <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
