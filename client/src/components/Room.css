@@ -1,0 +1,8 @@
+.comp {
+  color: white;
+  height: 100px;
+  display: inline-block;
+}
+.wrap {
+  display: flex;
+}

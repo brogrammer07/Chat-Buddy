@@ -12,6 +12,9 @@ import {
 } from "../atoms/editorOptionsModal";
 const langauges = Object.keys(allLangauges);
 const themes = [
+  "monokai",
+  "github",
+  "solarized_dark",
   "dracula",
   "github",
   "solarized_dark",
@@ -22,7 +25,8 @@ const themes = [
   "xcode",
   "ambiance",
   "solarized_light",
-];
+].sort();
+
 const fontSizes = [
   "8",
   "9",
@@ -37,7 +41,31 @@ const fontSizes = [
   "18",
   "19",
   "20",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25",
+  "26",
+  "27",
 ];
+
+const style = {
+  color: "white",
+  ".MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ffffff",
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(228, 219, 233, 0.25)",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(228, 219, 233, 0.75)",
+  },
+  ".MuiSvgIcon-root ": {
+    fill: "white !important",
+  },
+};
+
 const RoomHeader = () => {
   const [language, setLanguage] = useRecoilState(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
@@ -50,12 +78,13 @@ const RoomHeader = () => {
             Choose Language
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={language}
             label="Choose Language"
-            onChange={(e) => setLanguage(e.target.value)}>
+            onChange={(e) => setLanguage(e.target.value)}
+          >
             {langauges.map((lang, i) => (
               <MenuItem key={i} value={lang}>
                 {lang}
@@ -70,12 +99,13 @@ const RoomHeader = () => {
             Choose Theme
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={theme}
             label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}>
+            onChange={(e) => setTheme(e.target.value)}
+          >
             {themes.map((theme, i) => (
               <MenuItem key={i} value={theme}>
                 {theme}
@@ -90,12 +120,13 @@ const RoomHeader = () => {
             Choose Font Size
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={fontSize}
             label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}>
+            onChange={(e) => setFontSize(e.target.value)}
+          >
             {fontSizes.map((size, i) => (
               <MenuItem key={i} value={size}>
                 {size}
