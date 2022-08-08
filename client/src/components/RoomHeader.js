@@ -13,12 +13,17 @@ import {
 const langauges = Object.keys(allLangauges);
 const themes = [
   "monokai",
+  "github",
+  "solarized_dark",
   "dracula",
-  "tomorrow",
-  "kuroir",
-  "twilight",
+  "eclipse",
+  "tomorrow_night",
+  "tomorrow_night_blue",
   "xcode",
-];
+  "ambiance",
+  "solarized_light",
+].sort();
+
 const fontSizes = [
   "8",
   "9",
@@ -33,6 +38,13 @@ const fontSizes = [
   "18",
   "19",
   "20",
+  "21",
+  "22",
+  "23",
+  "24",
+  "25", 
+  "26",
+  "27",
 ];
 const RoomHeader = () => {
   const [language, setLanguage] = useRecoilState(langaugeState);
@@ -51,7 +63,8 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={language}
             label="Choose Language"
-            onChange={(e) => setLanguage(e.target.value)}>
+            onChange={(e) => setLanguage(e.target.value)}
+          >
             {langauges.map((lang, i) => (
               <MenuItem key={i} value={lang}>
                 {lang}
@@ -71,7 +84,8 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={theme}
             label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}>
+            onChange={(e) => setTheme(e.target.value)}
+          >
             {themes.map((theme, i) => (
               <MenuItem key={i} value={theme}>
                 {theme}
@@ -91,7 +105,8 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={fontSize}
             label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}>
+            onChange={(e) => setFontSize(e.target.value)}
+          >
             {fontSizes.map((size, i) => (
               <MenuItem key={i} value={size}>
                 {size}
