@@ -7,9 +7,13 @@ export const langaugeState = atom({
 
 export const themeState = atom({
   key: "themeState",
-  default: "monokai",
+  default: "dracula",
 });
 export const fontSizeState = atom({
   key: "fontSizeState",
+<<<<<<< HEAD
   default: "12",
+=======
+  default: "16",
+>>>>>>> main
 });

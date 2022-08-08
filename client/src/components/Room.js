@@ -11,10 +11,12 @@ import "./Room.css";
 // import SplitPane from "react-split-pane";
 
 import RoomHeader from "./RoomHeader";
+import Sidebar from "./Sidebar";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
   const theme = useRecoilValue(themeState);
   const fontSize = useRecoilValue(fontSizeState);
+
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [widthLeft, setWidthLeft] = useState("");
   const [widthRight, setWidthRight] = useState("");
@@ -35,8 +37,9 @@ const Room = () => {
   const handleInputChange = () => {};
 
   return (
-    <div className="w-full h-screen flex flex-col bg-[#272A37]">
+    <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
       <RoomHeader />
+      <Sidebar />
       <hr />
       <div
         style={{
@@ -45,36 +48,39 @@ const Room = () => {
         }}
       >
         <Split class="wrap" sizes={[50, 50]}>
-          <div className="comp">
+          <div className="">
             <Editor
               theme={theme}
-              width={(window.innerWidth - 30) / 2}
+              width={"100%"}
+              height={"80vh"}
               language={language}
-              body={body}
-              setBody={handleBodyChange}
+              body={mainEditorBody}
+              setBody={SetMainEditorBody}
               fontSize={fontSize}
             />
           </div>
-          <div className="comp">
-            <Editor
-              theme={theme}
-              language={""}
-              body={input}
-              setBody={handleInputChange}
-              width={(window.innerWidth - 30) / 2}
-              height={"35vh"}
-              fontSize={fontSize}
-            />
-            <Editor
-              theme={theme}
-              language={""}
-              body={output}
-              setBody={setOutput}
-              width={(window.innerWidth - 30) / 2}
-              readOnly={true}
-              height={"39vh"}
-              fontSize={fontSize}
-            />
+          <div className="grid grid-rows-2">
+            <div className="comp">
+              <Editor
+                theme={theme}
+                language={""}
+                body={input}
+                setBody={handleInputChange}
+                width={(window.innerWidth - 30) / 2}
+                height={"35vh"}
+                fontSize={fontSize}
+              />
+              <Editor
+                theme={theme}
+                language={""}
+                body={output}
+                setBody={setOutput}
+                width={(window.innerWidth - 30) / 2}
+                readOnly={true}
+                height={"39vh"}
+                fontSize={fontSize}
+              />
+            </div>
           </div>
         </Split>
       </div>
