@@ -45,6 +45,7 @@ const Room = () => {
         style={{
           position: "relative",
           width: "100%",
+          padding: "0px 10px",
         }}
       >
         <Split class="wrap" sizes={[50, 50]}>
@@ -54,8 +55,8 @@ const Room = () => {
               width={"100%"}
               height={"80vh"}
               language={language}
-              body={mainEditorBody}
-              setBody={SetMainEditorBody}
+              body={body}
+              setBody={setBody}
               fontSize={fontSize}
             />
           </div>

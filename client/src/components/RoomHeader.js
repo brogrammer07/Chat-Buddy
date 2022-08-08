@@ -45,10 +45,27 @@ const fontSizes = [
   "22",
   "23",
   "24",
-  "25", 
+  "25",
   "26",
   "27",
 ];
+
+const style = {
+  color: "white",
+  ".MuiOutlinedInput-notchedOutline": {
+    borderColor: "#ffffff",
+  },
+  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(228, 219, 233, 0.25)",
+  },
+  "&:hover .MuiOutlinedInput-notchedOutline": {
+    borderColor: "rgba(228, 219, 233, 0.75)",
+  },
+  ".MuiSvgIcon-root ": {
+    fill: "white !important",
+  },
+};
+
 const RoomHeader = () => {
   const [language, setLanguage] = useRecoilState(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
@@ -61,7 +78,7 @@ const RoomHeader = () => {
             Choose Language
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={language}
@@ -82,7 +99,7 @@ const RoomHeader = () => {
             Choose Theme
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={theme}
@@ -103,7 +120,7 @@ const RoomHeader = () => {
             Choose Font Size
           </InputLabel>
           <Select
-            sx={{ color: "white" }}
+            sx={style}
             labelId="demo-simple-select-label"
             id="demo-simple-select"
             value={fontSize}

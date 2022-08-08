@@ -11,9 +11,5 @@ export const themeState = atom({
 });
 export const fontSizeState = atom({
   key: "fontSizeState",
-<<<<<<< HEAD
   default: "12",
-=======
-  default: "16",
->>>>>>> main
 });
