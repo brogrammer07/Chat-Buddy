@@ -6,8 +6,10 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { socket } from "../utils/socket";
+import { userState } from "../atoms/userModal";
 const Form = () => {
   const [isJoin, setIsJoin] = useRecoilState(formState);
+  const [user, setUser] = useRecoilState(userState);
 
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -18,17 +20,16 @@ const Form = () => {
 
   const handleJoinSubmit = (e) => {
     e.preventDefault();
-    socket.emit("join_room", {
-      roomId: formData.roomId,
-      username: formData.username,
-    });
+    setUser(formData.username);
+    sessionStorage.setItem("username", JSON.stringify(formData.username));
+    sessionStorage.setItem("roomId", JSON.stringify(formData.roomId));
     navigate(`/room/${formData.roomId}`);
   };
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
     console.log(process.env.REACT_APP_SERVER_URL);
     await axios
-      .post(`${process.env.REACT_APP_SERVER_URL}/createroom`, {
+      .post(`${process.env.REACT_APP_SERVER_URL}/api/createroom`, {
         name: formData.roomName,
       })
       .then((res) => {

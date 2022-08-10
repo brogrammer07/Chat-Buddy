@@ -14,11 +14,20 @@ import RoomHeader from "./RoomHeader";
 import Sidebar from "./Sidebar";
 import { roomState } from "../atoms/roomModal";
 import { useParams } from "react-router-dom";
+import { io } from "socket.io-client";
+import { userState } from "../atoms/userModal";
+import { socket } from "../utils/socket";
+import { toast } from "react-toastify";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
+  const [user, setUser] = useState(
+    JSON.parse(sessionStorage.getItem("username"))
+  );
+  const username = useRecoilValue(userState);
+
   const theme = useRecoilValue(themeState);
   const fontSize = useRecoilValue(fontSizeState);
-  const [room, setRoom] = useRecoilState(roomState);
+
   const roomId = useParams();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [widthLeft, setWidthLeft] = useState("");
@@ -26,7 +35,7 @@ const Room = () => {
   const [body, setBody] = useState("");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-
+  const [users, setUsers] = useState([]);
   const handleWidthChange = (e) => {
     e.preventDefault();
 
@@ -35,11 +44,26 @@ const Room = () => {
     setWidthRight((100 - x).toString());
     setWidthLeft(x.toString());
   };
-
   useEffect(() => {
-    setRoom({
-      roomId: roomId.id,
-      roomName: "",
+    if (user) {
+      console.log(user, roomId);
+      socket.emit("join_room", {
+        roomId: roomId.id,
+        username: user,
+      });
+    } else {
+      console.log(username);
+      socket.emit("join_room", {
+        roomId: roomId.id,
+        username: username,
+      });
+    }
+    socket.on("roomData", ({ users }) => {
+      setUsers(users);
+    });
+    socket.on("leave_room", ({ id, username }) => {
+      setUsers(users.filter((user) => user.id !== id));
+      toast.info(`${username} left the room`);
     });
   }, []);
 
@@ -49,7 +73,7 @@ const Room = () => {
   return (
     <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
       <RoomHeader />
-      <Sidebar />
+      <Sidebar users={users} />
       <hr />
       <div
         style={{

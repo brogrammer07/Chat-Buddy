@@ -1,27 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { socket } from "../utils/socket";
-const data = [
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-];
 
-const Sidebar = () => {
+const Sidebar = ({ users }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const roomId = useParams();
-  console.log(socket);
-  useEffect(() => {
-    console.log("yes");
-    socket.on("new_user", (data) => {
-      console.log(data);
-    });
-  }, []);
+  const navigate = useNavigate();
+
+  useEffect(() => {}, []);
   return (
     <div
       className={`absolute bg-[#1B1C29] h-screen z-[10] flex transition-all duration-100 w-[15rem] ${
@@ -37,14 +25,14 @@ const Sidebar = () => {
           <div className="py-3 space-y-3">
             <h2 className="font-semibold text-[18px]">Connected</h2>
             <div className="grid grid-cols-3 gap-1 h-[57vh] overflow-y-auto scrollbar-hide">
-              {data.map((user, i) => (
+              {users.map((user, i) => (
                 <div
                   className="flex flex-col items-center space-y-1 h-[5rem]"
-                  key={i}>
+                  key={user.id}>
                   <div className="bg-red-600 flex items-center justify-center w-[3rem] h-[3rem] rounded-xl text-[20px] font-bold">
-                    T
+                    {user.username.charAt(0)}
                   </div>
-                  <p>{user.name}</p>
+                  <p>{user.username}</p>
                 </div>
               ))}
             </div>
@@ -59,11 +47,14 @@ const Sidebar = () => {
             className="bg-slate-200 w-full text-black font-bold rounded-xl py-2 hover:bg-slate-300 duration-150 transition-all">
             COPY ROOM ID
           </button>
-          <Link
-            to={"/"}
+          <button
+            onClick={() => {
+              socket.disconnect();
+              navigate("/");
+            }}
             className="bg-red-500 w-full flex items-center justify-center text-white font-bold  rounded-xl py-2 hover:bg-red-600 duration-150 transition-all">
             LEAVE
-          </Link>
+          </button>
         </div>
       </div>
       <div className="flex-[0.05] flex items-center">
