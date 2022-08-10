@@ -1,53 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
-import { Link } from "react-router-dom";
-
+import { Link, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { socket } from "../utils/socket";
 const data = [
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
-  {
-    name: "Tushar",
-  },
   {
     name: "Tushar",
   },
@@ -58,12 +14,20 @@ const data = [
 
 const Sidebar = () => {
   const [openSidebar, setOpenSidebar] = useState(false);
+  const roomId = useParams();
+  console.log(socket);
+  useEffect(() => {
+    console.log("yes");
+    socket.on("new_user", (data) => {
+      console.log(data);
+    });
+  }, []);
   return (
     <div
       className={`absolute bg-[#1B1C29] h-screen z-[10] flex transition-all duration-100 w-[15rem] ${
         openSidebar ? "translate-x-[0]" : "-translate-x-[13.5rem]"
-      }`}
-    >
+      }`}>
+      <ToastContainer />
       <div className="flex-[0.95] flex flex-col text-white pl-4 pr-1 py-3 justify-between">
         <div className="">
           <div className=" border-b-[1px] border-[#313131] pb-4">
@@ -76,8 +40,7 @@ const Sidebar = () => {
               {data.map((user, i) => (
                 <div
                   className="flex flex-col items-center space-y-1 h-[5rem]"
-                  key={i}
-                >
+                  key={i}>
                   <div className="bg-red-600 flex items-center justify-center w-[3rem] h-[3rem] rounded-xl text-[20px] font-bold">
                     T
                   </div>
@@ -88,13 +51,17 @@ const Sidebar = () => {
           </div>
         </div>
         <div className="flex flex-col space-y-3 items-center">
-          <button className="bg-slate-200 w-full text-black font-bold rounded-xl py-2 hover:bg-slate-300 duration-150 transition-all">
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(roomId.id);
+              toast.success("Room ID copied to clipboard");
+            }}
+            className="bg-slate-200 w-full text-black font-bold rounded-xl py-2 hover:bg-slate-300 duration-150 transition-all">
             COPY ROOM ID
           </button>
           <Link
             to={"/"}
-            className="bg-red-500 w-full flex items-center justify-center text-white font-bold  rounded-xl py-2 hover:bg-red-600 duration-150 transition-all"
-          >
+            className="bg-red-500 w-full flex items-center justify-center text-white font-bold  rounded-xl py-2 hover:bg-red-600 duration-150 transition-all">
             LEAVE
           </Link>
         </div>

@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useRecoilValue } from "recoil";
+import React, { useEffect, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   fontSizeState,
   langaugeState,
@@ -12,11 +12,14 @@ import "./Room.css";
 
 import RoomHeader from "./RoomHeader";
 import Sidebar from "./Sidebar";
+import { roomState } from "../atoms/roomModal";
+import { useParams } from "react-router-dom";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
   const theme = useRecoilValue(themeState);
   const fontSize = useRecoilValue(fontSizeState);
-
+  const [room, setRoom] = useRecoilState(roomState);
+  const roomId = useParams();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const [widthLeft, setWidthLeft] = useState("");
   const [widthRight, setWidthRight] = useState("");
@@ -33,6 +36,13 @@ const Room = () => {
     setWidthLeft(x.toString());
   };
 
+  useEffect(() => {
+    setRoom({
+      roomId: roomId.id,
+      roomName: "",
+    });
+  }, []);
+
   const handleBodyChange = () => {};
   const handleInputChange = () => {};
 
@@ -46,9 +56,8 @@ const Room = () => {
           position: "relative",
           width: "100%",
           padding: "0px 10px",
-        }}
-      >
-        <Split class="wrap" sizes={[50, 50]}>
+        }}>
+        <Split className="wrap" sizes={[50, 50]}>
           <div className="">
             <Editor
               theme={theme}

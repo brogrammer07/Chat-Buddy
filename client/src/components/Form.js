@@ -1,23 +1,49 @@
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { formState } from "../atoms/formModal";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import { socket } from "../utils/socket";
 const Form = () => {
   const [isJoin, setIsJoin] = useRecoilState(formState);
+
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     roomId: "",
+    roomName: "",
   });
 
   const handleJoinSubmit = (e) => {
     e.preventDefault();
-    // toast("error");
+    socket.emit("join_room", {
+      roomId: formData.roomId,
+      username: formData.username,
+    });
+    navigate(`/room/${formData.roomId}`);
   };
-  const handleCreateSubmit = (e) => {
+  const handleCreateSubmit = async (e) => {
     e.preventDefault();
-    // toast("error");
+    console.log(process.env.REACT_APP_SERVER_URL);
+    await axios
+      .post(`${process.env.REACT_APP_SERVER_URL}/createroom`, {
+        name: formData.roomName,
+      })
+      .then((res) => {
+        console.log(res);
+        socket.emit("join_room", {
+          roomId: res.data.roomId,
+          username: res.data.username,
+        });
+
+        navigate(`/room/${res.data.roomId}`);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error in creating room");
+      });
   };
   return (
     <div className="px-24  text-white my-auto">
@@ -73,6 +99,15 @@ const Form = () => {
               setFormData({ ...formData, username: e.target.value })
             }
             placeholder="Username"
+          />
+          <input
+            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
+            type="text"
+            value={formData.roomName}
+            onChange={(e) =>
+              setFormData({ ...formData, roomName: e.target.value })
+            }
+            placeholder="Room Name"
           />
 
           <button className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all">

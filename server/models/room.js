@@ -8,15 +8,19 @@ const roomSchema = new Schema({
   roomId: {
     type: String,
     required: true,
+    unique: true,
   },
   body: {
     type: String,
+    default: "",
   },
   language: {
     type: String,
+    default: "python",
   },
   input: {
     type: String,
+    default: "",
   },
 });
 
