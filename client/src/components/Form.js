@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { socket } from "../utils/socket";
 import { userState } from "../atoms/userModal";
 const Form = () => {
   const [isJoin, setIsJoin] = useRecoilState(formState);
-  const [user, setUser] = useRecoilState(userState);
-
   const navigate = useNavigate();
+  const [user, setUser] = useRecoilState(userState);
   const [formData, setFormData] = useState({
     username: "",
     roomId: "",
@@ -20,10 +18,11 @@ const Form = () => {
 
   const handleJoinSubmit = (e) => {
     e.preventDefault();
-    setUser(formData.username);
-    sessionStorage.setItem("username", JSON.stringify(formData.username));
-    sessionStorage.setItem("roomId", JSON.stringify(formData.roomId));
-    navigate(`/room/${formData.roomId}`);
+    navigate(`/room/${formData.roomId}`, {
+      state: {
+        username: formData.username,
+      },
+    });
   };
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
@@ -33,13 +32,11 @@ const Form = () => {
         name: formData.roomName,
       })
       .then((res) => {
-        console.log(res);
-        socket.emit("join_room", {
-          roomId: res.data.roomId,
-          username: res.data.username,
+        navigate(`/room/${res.data.roomId}`, {
+          state: {
+            username: res.data.username,
+          },
         });
-
-        navigate(`/room/${res.data.roomId}`);
       })
       .catch((err) => {
         console.log(err);

@@ -1,17 +1,17 @@
-let users = [];
+const users = [];
 
 export const addUser = ({ id, username, roomId }) => {
-  const existingUser = users.find((user) => {
-    user.roomId === roomId && user.username === username;
+  const index = users.findIndex((user) => {
+    user.id === id;
   });
 
-  if (existingUser) {
+  if (index !== -1) {
     return { error: "Username is taken" };
   }
   const user = { id, username, roomId };
 
   users.push(user);
-  return { user };
+  return;
 };
 
 export const removeUser = (id) => {

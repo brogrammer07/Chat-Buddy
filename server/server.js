@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import { Server } from "socket.io";
 import roomRoutes from "./routes/room.js";
 import { addUser, removeUser, getUser, getUsersInRoom } from "./utils/user.js";
+import { ACTIONS } from "./utils/Actions.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
@@ -38,36 +39,53 @@ const io = new Server(server, {
   },
 });
 
+const userSocketMap = {};
+function getAllConnectedClients(roomId) {
+  return Array.from(io.sockets.adapter.rooms.get(roomId) || []).map(
+    (socketId) => {
+      return {
+        socketId,
+        username: userSocketMap[socketId],
+      };
+    }
+  );
+}
+
 io.on("connection", (socket) => {
   console.log("socket connected", socket.id);
-  socket.on("join_room", ({ roomId, username }) => {
-    const { error, user } = addUser({ id: socket.id, username, roomId });
 
-    if (error) return callback(error);
+  socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
+    userSocketMap[socket.id] = username;
     socket.join(roomId);
-    io.to(roomId).emit("roomData", {
-      room: roomId,
-      users: getUsersInRoom(roomId),
+    console.log(`${username} joined ${roomId}`);
+    const clients = getAllConnectedClients(roomId);
+    clients.forEach(({ socketId }) => {
+      io.to(socketId).emit(ACTIONS.JOINED, {
+        clients,
+        username,
+        socketId: socket.id,
+      });
     });
-    console.log(`${username} joined room ${roomId}`);
   });
+
+  socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
+    socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+  });
+
+  socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
+    io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
+  });
+
   socket.on("disconnecting", () => {
     const rooms = [...socket.rooms];
     rooms.forEach((roomId) => {
-      if (roomId !== socket.id) {
-        socket.in(roomId).emit(
-          "leave_room",
-          {
-            id: socket.id,
-            username: getUser(socket.id).username,
-          },
-          () => {
-            removeUser(socket.id);
-            console.log(`${getUser(socket.id).username} left room ${rooms}`);
-          }
-        );
-      }
+      socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
+        socketId: socket.id,
+        username: userSocketMap[socket.id],
+      });
     });
+    delete userSocketMap[socket.id];
+    console.log("socket disconnected", socket.id);
     socket.leave();
   });
 });

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { socket } from "../utils/socket";
 
 const Sidebar = ({ users }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -15,7 +14,6 @@ const Sidebar = ({ users }) => {
       className={`absolute bg-[#1B1C29] h-screen z-[10] flex transition-all duration-100 w-[15rem] ${
         openSidebar ? "translate-x-[0]" : "-translate-x-[13.5rem]"
       }`}>
-      <ToastContainer />
       <div className="flex-[0.95] flex flex-col text-white pl-4 pr-1 py-3 justify-between">
         <div className="">
           <div className=" border-b-[1px] border-[#313131] pb-4">
@@ -49,7 +47,6 @@ const Sidebar = ({ users }) => {
           </button>
           <button
             onClick={() => {
-              socket.disconnect();
               navigate("/");
             }}
             className="bg-red-500 w-full flex items-center justify-center text-white font-bold  rounded-xl py-2 hover:bg-red-600 duration-150 transition-all">

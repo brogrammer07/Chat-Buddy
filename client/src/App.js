@@ -7,7 +7,7 @@ function App() {
     <div className="">
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/room/:id" exact element={<Room />} />
+        <Route path="/room/:roomId" exact element={<Room />} />
       </Routes>
     </div>
   );

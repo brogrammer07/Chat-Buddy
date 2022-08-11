@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
+import queryString from "query-string";
 import {
   fontSizeState,
   langaugeState,
@@ -12,68 +13,71 @@ import "./Room.css";
 
 import RoomHeader from "./RoomHeader";
 import Sidebar from "./Sidebar";
-import { roomState } from "../atoms/roomModal";
-import { useParams } from "react-router-dom";
-import { io } from "socket.io-client";
-import { userState } from "../atoms/userModal";
-import { socket } from "../utils/socket";
-import { toast } from "react-toastify";
+import { useLocation, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import { connect } from "../utils/socket";
+import { ACTIONS } from "../utils/Actions";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
-  const [user, setUser] = useState(
-    JSON.parse(sessionStorage.getItem("username"))
-  );
-  const username = useRecoilValue(userState);
-
-  const theme = useRecoilValue(themeState);
   const fontSize = useRecoilValue(fontSizeState);
-
-  const roomId = useParams();
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
-  const [widthLeft, setWidthLeft] = useState("");
-  const [widthRight, setWidthRight] = useState("");
+  const theme = useRecoilValue(themeState);
   const [body, setBody] = useState("");
   const [input, setInput] = useState("");
+  const navigate = useLocation();
   const [output, setOutput] = useState("");
-  const [users, setUsers] = useState([]);
-  const handleWidthChange = (e) => {
-    e.preventDefault();
+  const location = useLocation();
 
-    let x = e.target.value;
-    console.log(x);
-    setWidthRight((100 - x).toString());
-    setWidthLeft(x.toString());
-  };
+  const [clients, setClients] = useState([]);
+  console.log(location.state);
+  const { roomId } = useParams();
   useEffect(() => {
-    if (user) {
-      console.log(user, roomId);
-      socket.emit("join_room", {
-        roomId: roomId.id,
-        username: user,
-      });
-    } else {
-      console.log(username);
-      socket.emit("join_room", {
-        roomId: roomId.id,
-        username: username,
-      });
+    const socket = connect();
+    socket.on("connect_error", (err) => handleErrors(err));
+    socket.on("connect_failed", (err) => handleErrors(err));
+
+    function handleErrors(e) {
+      console.log("socket error", e);
+      toast.error("Socket connection failed, try again later.");
+      navigate("/");
     }
-    socket.on("roomData", ({ users }) => {
-      setUsers(users);
+
+    socket.emit(ACTIONS.JOIN, {
+      roomId,
+      username: location.state?.username,
     });
-    socket.on("leave_room", ({ id, username }) => {
-      setUsers(users.filter((user) => user.id !== id));
-      toast.info(`${username} left the room`);
+
+    // Listening for joined event
+    socket.on(ACTIONS.JOINED, ({ clients, username, socketId }) => {
+      if (username !== location.state?.username) {
+        toast.info(`${username} joined the room.`);
+        console.log(`${username} joined`);
+      }
+      setClients(clients);
+      // socket.emit(ACTIONS.SYNC_CODE, {
+      //   code: codeRef.current,
+      //   socketId,
+      // });
     });
+
+    // Listening for disconnected
+    socket.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
+      toast.info(`${username} left the room.`);
+      setClients((prev) => {
+        return prev.filter((client) => client.socketId !== socketId);
+      });
+    });
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
-  const handleBodyChange = () => {};
   const handleInputChange = () => {};
 
   return (
     <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
+      <ToastContainer />
       <RoomHeader />
-      <Sidebar users={users} />
+      <Sidebar users={clients} />
       <hr />
       <div
         style={{
@@ -100,7 +104,7 @@ const Room = () => {
                 language={""}
                 body={input}
                 setBody={handleInputChange}
-                width={(window.innerWidth - 30) / 2}
+                width={`${(window.innerWidth - 30) / 2}px`}
                 height={"35vh"}
                 fontSize={fontSize}
               />
@@ -109,7 +113,7 @@ const Room = () => {
                 language={""}
                 body={output}
                 setBody={setOutput}
-                width={(window.innerWidth - 30) / 2}
+                width={`${(window.innerWidth - 30) / 2}px`}
                 readOnly={true}
                 height={"39vh"}
                 fontSize={fontSize}
