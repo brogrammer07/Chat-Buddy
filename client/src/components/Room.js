@@ -18,7 +18,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { connect, initSocket } from "../utils/socket";
 import { ACTIONS } from "../utils/Actions";
 const Room = () => {
-  const language = useRecoilValue(langaugeState);
+  const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
   const theme = useRecoilValue(themeState);
   const [body, setBody] = useState("");
@@ -28,7 +28,6 @@ const Room = () => {
   const location = useLocation();
 
   const [clients, setClients] = useState([]);
-  console.log(location.state);
   const { roomId } = useParams();
   const socketRef = useRef(null);
   useEffect(() => {
@@ -38,7 +37,6 @@ const Room = () => {
       socketRef.current.on("connect_failed", (err) => handleErrors(err));
 
       function handleErrors(e) {
-        console.log("socket error", e);
         toast.error("Socket connection failed, try again later.");
         navigate("/");
       }
@@ -49,20 +47,41 @@ const Room = () => {
       });
 
       // Listening for joined event
+
       socketRef.current.on(
         ACTIONS.JOINED,
         ({ clients, username, socketId }) => {
           if (username !== location.state?.username) {
             toast.success(`${username} joined the room.`);
-            console.log(`${username} joined`);
+            console.log(username, language);
+
+            socketRef.current.emit(ACTIONS.SYNC_CODE, {
+              body: body,
+              input: input,
+              output: output,
+              language: language,
+              socketId,
+            });
           }
           setClients(clients);
-          socketRef.current.emit(ACTIONS.SYNC_CODE, {
-            code: body,
-            socketId,
-          });
         }
       );
+      // Listening for body change event
+      socketRef.current.on(ACTIONS.BODY_CHANGE, ({ body }) => {
+        setBody(body);
+      });
+      // Listening for input change event
+      socketRef.current.on(ACTIONS.INPUT_CHANGE, ({ input }) => {
+        setInput(input);
+      });
+      // Listening for output change event
+      socketRef.current.on(ACTIONS.OUTPUT_CHANGE, ({ output }) => {
+        setOutput(output);
+      });
+      // Listening for Language change event
+      socketRef.current.on(ACTIONS.LANGUAGE_CHANGE, ({ language }) => {
+        setLanguage(language);
+      });
 
       // Listening for disconnected
       socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
@@ -80,60 +99,80 @@ const Room = () => {
     };
   }, []);
 
-  const handleInputChange = () => {};
+  const handleInputChange = (value) => {
+    socketRef.current.emit(ACTIONS.INPUT_CHANGE, {
+      roomId,
+      input: value,
+    });
+    setInput(value);
+  };
+  const handleBodyChange = (value) => {
+    socketRef.current.emit(ACTIONS.BODY_CHANGE, {
+      roomId,
+      body: value,
+    });
+    setBody(value);
+  };
+  const handleOutputChange = (value) => {
+    socketRef.current.emit(ACTIONS.OUTPUT_CHANGE, {
+      roomId,
+      output: value,
+    });
+    setOutput(value);
+  };
+  const handleLanguageChange = (e) => {
+    console.log("e", e.target.value);
+    socketRef.current.emit(ACTIONS.LANGUAGE_CHANGE, {
+      roomId,
+      language: e.target.value,
+    });
+    setLanguage(e.target.value);
+  };
 
   return (
     <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
       <ToastContainer />
-      <RoomHeader />
+      <RoomHeader handleLanguageChange={handleLanguageChange} />
       <Sidebar users={clients} />
       <hr />
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          padding: "0px 10px",
-        }}>
-        <Split className="wrap" sizes={[50, 50]}>
+      <div className="flex">
+        <div className="flex-[0.6]">
+          <Editor
+            type={"body"}
+            theme={theme}
+            width={"100%"}
+            height={"80vh"}
+            language={language}
+            body={body}
+            handleBodyChange={handleBodyChange}
+            fontSize={fontSize}
+          />
+        </div>
+        <div className="flex-[0.4] flex flex-col">
           <div className="">
             <Editor
-              socketRef={socketRef}
-              roomId={roomId}
+              type={"input"}
               theme={theme}
-              width={"100%"}
-              height={"80vh"}
-              language={language}
-              body={body}
-              setBody={setBody}
+              language={""}
+              body={input}
+              handleInputChange={handleInputChange}
+              width={`${(window.innerWidth - 30) / 2}px`}
+              height={"40vh"}
+              fontSize={fontSize}
+            />
+            <Editor
+              type={"output"}
+              theme={theme}
+              language={""}
+              body={output}
+              handleOutputChange={handleOutputChange}
+              width={`${(window.innerWidth - 30) / 2}px`}
+              readOnly={true}
+              height={"40vh"}
               fontSize={fontSize}
             />
           </div>
-          <div className="grid grid-rows-2">
-            <div className="comp">
-              <Editor
-                roomId={roomId}
-                theme={theme}
-                language={""}
-                body={input}
-                setBody={handleInputChange}
-                width={`${(window.innerWidth - 30) / 2}px`}
-                height={"35vh"}
-                fontSize={fontSize}
-              />
-              <Editor
-                roomId={roomId}
-                theme={theme}
-                language={""}
-                body={output}
-                setBody={setOutput}
-                width={`${(window.innerWidth - 30) / 2}px`}
-                readOnly={true}
-                height={"39vh"}
-                fontSize={fontSize}
-              />
-            </div>
-          </div>
-        </Split>
+        </div>
       </div>
     </div>
   );

@@ -68,13 +68,33 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on(ACTIONS.CODE_CHANGE, ({ roomId, code }) => {
-    socket.in(roomId).emit(ACTIONS.CODE_CHANGE, { code });
+  socket.on(ACTIONS.BODY_CHANGE, ({ roomId, body }) => {
+    console.log("Body Change", body);
+    socket.to(roomId).emit(ACTIONS.BODY_CHANGE, { body });
+  });
+  socket.on(ACTIONS.INPUT_CHANGE, ({ roomId, input }) => {
+    console.log("Input Change", input);
+    socket.to(roomId).emit(ACTIONS.INPUT_CHANGE, { input });
+  });
+  socket.on(ACTIONS.OUTPUT_CHANGE, ({ roomId, output }) => {
+    console.log("Output Change", output);
+    socket.to(roomId).emit(ACTIONS.OUTPUT_CHANGE, { output });
+  });
+  socket.on(ACTIONS.LANGUAGE_CHANGE, ({ roomId, language }) => {
+    console.log("Language Change", language);
+    socket.to(roomId).emit(ACTIONS.LANGUAGE_CHANGE, { language });
   });
 
-  socket.on(ACTIONS.SYNC_CODE, ({ socketId, code }) => {
-    io.to(socketId).emit(ACTIONS.CODE_CHANGE, { code });
-  });
+  socket.on(
+    ACTIONS.SYNC_CODE,
+    ({ socketId, body, input, output, language }) => {
+      console.log("Sync Change", body, input, output, language, socketId);
+      io.to(socketId).emit(ACTIONS.BODY_CHANGE, { body });
+      io.to(socketId).emit(ACTIONS.INPUT_CHANGE, { input });
+      io.to(socketId).emit(ACTIONS.OUTPUT_CHANGE, { output });
+      io.to(socketId).emit(ACTIONS.LANGUAGE_CHANGE, { language });
+    }
+  );
 
   socket.on("disconnecting", () => {
     const rooms = [...socket.rooms];

@@ -5,7 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 
 const Sidebar = ({ users }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
-  const roomId = useParams();
+  const { roomId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {}, []);
@@ -39,7 +39,7 @@ const Sidebar = ({ users }) => {
         <div className="flex flex-col space-y-3 items-center">
           <button
             onClick={() => {
-              navigator.clipboard.writeText(roomId.id);
+              navigator.clipboard.writeText(roomId);
               toast.success("Room ID copied to clipboard");
             }}
             className="bg-slate-200 w-full text-black font-bold rounded-xl py-2 hover:bg-slate-300 duration-150 transition-all">

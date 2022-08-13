@@ -66,7 +66,7 @@ const style = {
   },
 };
 
-const RoomHeader = () => {
+const RoomHeader = ({ handleLanguageChange }) => {
   const [language, setLanguage] = useRecoilState(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [fontSize, setFontSize] = useRecoilState(fontSizeState);
@@ -83,8 +83,7 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={language}
             label="Choose Language"
-            onChange={(e) => setLanguage(e.target.value)}
-          >
+            onChange={handleLanguageChange}>
             {langauges.map((lang, i) => (
               <MenuItem key={i} value={lang}>
                 {lang}
@@ -104,8 +103,7 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={theme}
             label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}
-          >
+            onChange={(e) => setTheme(e.target.value)}>
             {themes.map((theme, i) => (
               <MenuItem key={i} value={theme}>
                 {theme}
@@ -125,8 +123,7 @@ const RoomHeader = () => {
             id="demo-simple-select"
             value={fontSize}
             label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}
-          >
+            onChange={(e) => setFontSize(e.target.value)}>
             {fontSizes.map((size, i) => (
               <MenuItem key={i} value={size}>
                 {size}
