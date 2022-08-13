@@ -52,6 +52,9 @@ const Room = () => {
           roomId: roomId,
         })
         .then((res) => {
+          let data = JSON.parse(localStorage.getItem("room"));
+          data.roomName = res.data.name;
+          localStorage.setItem("room", JSON.stringify(data));
           setLoading(false);
           setBody(res.data.body);
           setInput(res.data.input);
