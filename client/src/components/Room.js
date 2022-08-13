@@ -202,40 +202,44 @@ const Room = () => {
           />
           <Sidebar users={clients} />
           <hr />
-          <div className="flex">
-            <div className="flex-[0.6]">
+          <div className="flex h-full">
+            <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] h-[82vh]">
+              <p className="text-white bg-[#434343] mx-auto">Code</p>
               <Editor
                 type={"body"}
                 theme={theme}
                 width={"100%"}
-                height={"80vh"}
                 language={language}
                 body={body}
                 handleBodyChange={handleBodyChange}
                 fontSize={fontSize}
               />
             </div>
-            <div className="flex-[0.4] flex flex-col">
-              <div className="">
+            <div className="flex-[0.3] flex flex-col border-r-[1rem] border-b-[1rem] border-[#434343] h-[82vh]">
+              <div className="border-[1rem] border-[#434343] h-full ">
+                <p className="text-white bg-[#434343] mx-auto">Input</p>
                 <Editor
                   type={"input"}
                   theme={theme}
                   language={""}
                   body={input}
                   handleInputChange={handleInputChange}
-                  width={`${(window.innerWidth - 30) / 2}px`}
-                  height={"40vh"}
+                  width={"100%"}
+                  height={"34vh"}
                   fontSize={fontSize}
                 />
+              </div>
+              <div className="border-[1rem] border-t-0 border-[#434343] h-full">
+                <p className="text-white bg-[#434343] mx-auto">Output</p>
                 <Editor
                   type={"output"}
                   theme={theme}
                   language={""}
                   body={output}
                   handleOutputChange={handleOutputChange}
-                  width={`${(window.innerWidth - 30) / 2}px`}
+                  width={"100%"}
                   readOnly={true}
-                  height={"40vh"}
+                  height={"34vh"}
                   fontSize={fontSize}
                 />
               </div>

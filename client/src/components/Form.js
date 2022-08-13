@@ -55,7 +55,7 @@ const Form = () => {
   };
   return (
     <div className="px-24  text-white my-auto">
-      <h1 className="text-[2rem] font-bold">Realtime Collaboration</h1>
+      <h1 className="text-[2rem] font-bold">Coding Collaboration</h1>
 
       {isJoin ? (
         <form
