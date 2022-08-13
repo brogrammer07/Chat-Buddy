@@ -17,7 +17,7 @@ app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(
   cors({
     allowedHeaders: ["Content-Type"],
-    origin: ["http://localhost:3000"],
+    origin: [process.env.CLIENT_URL],
   })
 );
 
@@ -36,7 +36,7 @@ const server = http.createServer(app);
 // Create socket server
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: process.env.CLIENT_URL,
     methods: ["GET", "POST"],
   },
 });
