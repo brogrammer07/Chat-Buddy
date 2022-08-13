@@ -15,7 +15,7 @@ import RoomHeader from "./RoomHeader";
 import Sidebar from "./Sidebar";
 import { useLocation, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { connect } from "../utils/socket";
+import { connect, initSocket } from "../utils/socket";
 import { ACTIONS } from "../utils/Actions";
 const Room = () => {
   const language = useRecoilValue(langaugeState);
@@ -30,44 +30,53 @@ const Room = () => {
   const [clients, setClients] = useState([]);
   console.log(location.state);
   const { roomId } = useParams();
+  const socketRef = useRef(null);
   useEffect(() => {
-    const socket = connect();
-    socket.on("connect_error", (err) => handleErrors(err));
-    socket.on("connect_failed", (err) => handleErrors(err));
+    const init = () => {
+      socketRef.current = initSocket();
+      socketRef.current.on("connect_error", (err) => handleErrors(err));
+      socketRef.current.on("connect_failed", (err) => handleErrors(err));
 
-    function handleErrors(e) {
-      console.log("socket error", e);
-      toast.error("Socket connection failed, try again later.");
-      navigate("/");
-    }
-
-    socket.emit(ACTIONS.JOIN, {
-      roomId,
-      username: location.state?.username,
-    });
-
-    // Listening for joined event
-    socket.on(ACTIONS.JOINED, ({ clients, username, socketId }) => {
-      if (username !== location.state?.username) {
-        toast.info(`${username} joined the room.`);
-        console.log(`${username} joined`);
+      function handleErrors(e) {
+        console.log("socket error", e);
+        toast.error("Socket connection failed, try again later.");
+        navigate("/");
       }
-      setClients(clients);
-      // socket.emit(ACTIONS.SYNC_CODE, {
-      //   code: codeRef.current,
-      //   socketId,
-      // });
-    });
 
-    // Listening for disconnected
-    socket.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
-      toast.info(`${username} left the room.`);
-      setClients((prev) => {
-        return prev.filter((client) => client.socketId !== socketId);
+      socketRef.current.emit(ACTIONS.JOIN, {
+        roomId,
+        username: location.state?.username,
       });
-    });
+
+      // Listening for joined event
+      socketRef.current.on(
+        ACTIONS.JOINED,
+        ({ clients, username, socketId }) => {
+          if (username !== location.state?.username) {
+            toast.success(`${username} joined the room.`);
+            console.log(`${username} joined`);
+          }
+          setClients(clients);
+          socketRef.current.emit(ACTIONS.SYNC_CODE, {
+            code: body,
+            socketId,
+          });
+        }
+      );
+
+      // Listening for disconnected
+      socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
+        toast.success(`${username} left the room.`);
+        setClients((prev) => {
+          return prev.filter((client) => client.socketId !== socketId);
+        });
+      });
+    };
+    init();
     return () => {
-      socket.disconnect();
+      socketRef.current.disconnect();
+      socketRef.current.off(ACTIONS.JOINED);
+      socketRef.current.off(ACTIONS.DISCONNECTED);
     };
   }, []);
 
@@ -88,6 +97,8 @@ const Room = () => {
         <Split className="wrap" sizes={[50, 50]}>
           <div className="">
             <Editor
+              socketRef={socketRef}
+              roomId={roomId}
               theme={theme}
               width={"100%"}
               height={"80vh"}
@@ -100,6 +111,7 @@ const Room = () => {
           <div className="grid grid-rows-2">
             <div className="comp">
               <Editor
+                roomId={roomId}
                 theme={theme}
                 language={""}
                 body={input}
@@ -109,6 +121,7 @@ const Room = () => {
                 fontSize={fontSize}
               />
               <Editor
+                roomId={roomId}
                 theme={theme}
                 language={""}
                 body={output}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AceEditor from "react-ace";
 
 import "ace-builds/src-noconflict/ext-language_tools";
@@ -20,6 +20,7 @@ import "ace-builds/src-noconflict/theme-tomorrow_night_blue";
 import "ace-builds/src-noconflict/theme-xcode";
 import "ace-builds/src-noconflict/theme-ambiance";
 import "ace-builds/src-noconflict/theme-solarized_light";
+import { ACTIONS } from "./Actions";
 const Editor = ({
   language,
   theme,
@@ -29,13 +30,39 @@ const Editor = ({
   readOnly,
   width,
   fontSize,
+  socketRef,
+  roomId,
 }) => {
+  console.log(socketRef);
+  useEffect(() => {
+    if (socketRef.current) {
+      socketRef.current.on(ACTIONS.CODE_CHANGE, ({ code }) => {
+        if (code !== null) {
+          setBody(code);
+        }
+      });
+    }
+
+    return () => {
+      socketRef.current.off(ACTIONS.CODE_CHANGE);
+    };
+  }, []);
+
+  const handleBodyChange = (value) => {
+    setBody(value);
+    if (socketRef.current) {
+      socketRef.current.emit(ACTIONS.CODE_CHANGE, {
+        roomId,
+        code: value,
+      });
+    }
+  };
   return (
     <div>
       <AceEditor
         mode={language}
         theme={theme}
-        onChange={(value) => setBody(value)}
+        onChange={(value) => handleBodyChange(value)}
         value={body}
         width={width ? width : "100%"}
         height={height ? height : "73vh"}
