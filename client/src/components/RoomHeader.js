@@ -4,7 +4,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import { allLangauges } from "../utils/langauges";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   fontSizeState,
   langaugeState,
@@ -67,9 +67,10 @@ const style = {
 };
 
 const RoomHeader = ({ handleLanguageChange }) => {
-  const [language, setLanguage] = useRecoilState(langaugeState);
+  const language = useRecoilValue(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [fontSize, setFontSize] = useRecoilState(fontSizeState);
+
   return (
     <div className="flex text-[#5b5b5b] space-x-16 h-[30rem] px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
       <div className="w-[10rem]">

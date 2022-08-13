@@ -26,10 +26,14 @@ const Room = () => {
   const navigate = useLocation();
   const [output, setOutput] = useState("");
   const location = useLocation();
-
   const [clients, setClients] = useState([]);
   const { roomId } = useParams();
   const socketRef = useRef(null);
+  const bodyRef = useRef(null);
+  const inputRef = useRef(null);
+  const outputRef = useRef(null);
+  const languageRef = useRef(null);
+  languageRef.current = language;
   useEffect(() => {
     const init = () => {
       socketRef.current = initSocket();
@@ -56,10 +60,10 @@ const Room = () => {
             console.log(username, language);
 
             socketRef.current.emit(ACTIONS.SYNC_CODE, {
-              body: body,
-              input: input,
-              output: output,
-              language: language,
+              body: bodyRef.current,
+              input: inputRef.current,
+              output: outputRef.current,
+              language: languageRef.current,
               socketId,
             });
           }
@@ -68,18 +72,22 @@ const Room = () => {
       );
       // Listening for body change event
       socketRef.current.on(ACTIONS.BODY_CHANGE, ({ body }) => {
+        bodyRef.current = body;
         setBody(body);
       });
       // Listening for input change event
       socketRef.current.on(ACTIONS.INPUT_CHANGE, ({ input }) => {
+        inputRef.current = input;
         setInput(input);
       });
       // Listening for output change event
       socketRef.current.on(ACTIONS.OUTPUT_CHANGE, ({ output }) => {
+        outputRef.current = output;
         setOutput(output);
       });
       // Listening for Language change event
       socketRef.current.on(ACTIONS.LANGUAGE_CHANGE, ({ language }) => {
+        languageRef.current = language;
         setLanguage(language);
       });
 
@@ -104,6 +112,7 @@ const Room = () => {
       roomId,
       input: value,
     });
+    inputRef.current = value;
     setInput(value);
   };
   const handleBodyChange = (value) => {
@@ -111,6 +120,7 @@ const Room = () => {
       roomId,
       body: value,
     });
+    bodyRef.current = value;
     setBody(value);
   };
   const handleOutputChange = (value) => {
@@ -118,6 +128,7 @@ const Room = () => {
       roomId,
       output: value,
     });
+    outputRef.current = value;
     setOutput(value);
   };
   const handleLanguageChange = (e) => {
@@ -126,9 +137,10 @@ const Room = () => {
       roomId,
       language: e.target.value,
     });
+    languageRef.current = e.target.value;
     setLanguage(e.target.value);
   };
-
+  console.log(languageRef.current);
   return (
     <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
       <ToastContainer />
