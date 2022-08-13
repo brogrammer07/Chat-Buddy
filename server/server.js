@@ -6,7 +6,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
 import roomRoutes from "./routes/room.js";
-import { addUser, removeUser, getUser, getUsersInRoom } from "./utils/user.js";
 import { ACTIONS } from "./utils/Actions.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
@@ -25,13 +24,16 @@ app.use(
 // set routes
 app.use("/api", roomRoutes);
 
+// Set Port
 const PORT = process.env.PORT;
 app.get("/", (req, res) => {
   res.send("Chat Buddy API");
 });
+
+// Create http server
 const server = http.createServer(app);
 
-// Socket Io
+// Create socket server
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -51,15 +53,20 @@ function getAllConnectedClients(roomId) {
   );
 }
 
+// Socket Connection
+
 io.on("connection", (socket) => {
   console.log("socket connected", socket.id);
+  // Socket Events
 
+  // Join Room Event
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
     userSocketMap[socket.id] = username;
     socket.join(roomId);
     console.log(`${username} joined ${roomId}`);
     const clients = getAllConnectedClients(roomId);
     clients.forEach(({ socketId }) => {
+      // Send Joined Client to other clients
       io.to(socketId).emit(ACTIONS.JOINED, {
         clients,
         username,
@@ -68,23 +75,28 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Body Change Event
   socket.on(ACTIONS.BODY_CHANGE, ({ roomId, body }) => {
     console.log("Body Change", body);
     socket.to(roomId).emit(ACTIONS.BODY_CHANGE, { body });
   });
+  // Input Change Event
   socket.on(ACTIONS.INPUT_CHANGE, ({ roomId, input }) => {
     console.log("Input Change", input);
     socket.to(roomId).emit(ACTIONS.INPUT_CHANGE, { input });
   });
+  // Output Change Event
   socket.on(ACTIONS.OUTPUT_CHANGE, ({ roomId, output }) => {
     console.log("Output Change", output);
     socket.to(roomId).emit(ACTIONS.OUTPUT_CHANGE, { output });
   });
+  // Language Change Event
   socket.on(ACTIONS.LANGUAGE_CHANGE, ({ roomId, language }) => {
     console.log("Language Change", language);
     socket.to(roomId).emit(ACTIONS.LANGUAGE_CHANGE, { language });
   });
 
+  // Sync Code Event
   socket.on(
     ACTIONS.SYNC_CODE,
     ({ socketId, body, input, output, language }) => {
@@ -96,9 +108,22 @@ io.on("connection", (socket) => {
     }
   );
 
+  // Save Code Event
+  socket.on(ACTIONS.SAVE, ({ roomId }) => {
+    console.log("Save", roomId);
+    socket.to(roomId).emit(ACTIONS.SAVE);
+  });
+  // Saved Code Event
+  socket.on(ACTIONS.SAVED, ({ roomId }) => {
+    console.log("Saved", roomId);
+    socket.to(roomId).emit(ACTIONS.SAVED);
+  });
+
+  // Disconnect Event
   socket.on("disconnecting", () => {
     const rooms = [...socket.rooms];
     rooms.forEach((roomId) => {
+      // Remove user from room
       socket.in(roomId).emit(ACTIONS.DISCONNECTED, {
         socketId: socket.id,
         username: userSocketMap[socket.id],
@@ -110,6 +135,7 @@ io.on("connection", (socket) => {
   });
 });
 
+// Connect to MongoDB
 mongoose
   .connect(process.env.DB_CONNECTION, {
     useNewUrlParser: true,

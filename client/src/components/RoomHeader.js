@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -10,7 +10,10 @@ import {
   langaugeState,
   themeState,
 } from "../atoms/editorOptionsModal";
-const langauges = Object.keys(allLangauges);
+import axios from "axios";
+import { toast } from "react-toastify";
+import { ACTIONS } from "../utils/Actions";
+const langauges = Object.entries(allLangauges);
 const themes = [
   "monokai",
   "github",
@@ -66,11 +69,59 @@ const style = {
   },
 };
 
-const RoomHeader = ({ handleLanguageChange }) => {
+const RoomHeader = ({
+  handleLanguageChange,
+  roomId,
+  bodyRef,
+  languageRef,
+  inputRef,
+  socketRef,
+}) => {
+  // Modal states
   const language = useRecoilValue(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [fontSize, setFontSize] = useRecoilState(fontSizeState);
-
+  // Saving and Running State
+  const [saving, setSaving] = useState(false);
+  const [running, setRunning] = useState(false);
+  useEffect(() => {
+    // Listening for saving event
+    if (socketRef.current) {
+      socketRef.current.on(ACTIONS.SAVE, () => {
+        setSaving(true);
+      });
+      // Listening for saved event
+      socketRef.current.on(ACTIONS.SAVED, () => {
+        toast.success("Code saved successfully");
+        setSaving(false);
+      });
+    }
+  }, []);
+  // Save Code Handler
+  const saveCode = async () => {
+    setSaving(true);
+    socketRef.current.emit(ACTIONS.SAVE, {
+      roomId,
+    });
+    await axios
+      .post(`${process.env.REACT_APP_SERVER_URL}/api/save`, {
+        language: languageRef.current,
+        roomId: roomId,
+        body: bodyRef.current,
+        input: inputRef.current,
+      })
+      .then((res) => {
+        setSaving(false);
+        socketRef.current.emit(ACTIONS.SAVED, {
+          roomId,
+        });
+        toast.success("Code saved successfully");
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Error in saving");
+      });
+  };
   return (
     <div className="flex text-[#5b5b5b] space-x-16 h-[30rem] px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
       <div className="w-[10rem]">
@@ -86,8 +137,8 @@ const RoomHeader = ({ handleLanguageChange }) => {
             label="Choose Language"
             onChange={handleLanguageChange}>
             {langauges.map((lang, i) => (
-              <MenuItem key={i} value={lang}>
-                {lang}
+              <MenuItem key={i} value={lang[1]}>
+                {lang[0]}
               </MenuItem>
             ))}
           </Select>
@@ -132,6 +183,22 @@ const RoomHeader = ({ handleLanguageChange }) => {
             ))}
           </Select>
         </FormControl>
+      </div>
+      <div className="flex space-x-5 ">
+        <div className="w-[10rem]">
+          <button
+            onClick={() => saveCode()}
+            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            {saving ? "Saving" : "Save"}
+          </button>
+        </div>
+        <div className="w-[10rem]">
+          <button
+            onClick={() => saveCode()}
+            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            {running ? "Running" : "Run"}
+          </button>
+        </div>
       </div>
     </div>
   );
