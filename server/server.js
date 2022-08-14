@@ -109,9 +109,9 @@ io.on("connection", (socket) => {
   );
 
   // Save Code Event
-  socket.on(ACTIONS.SAVE, ({ roomId }) => {
+  socket.on(ACTIONS.SAVE, ({ roomId, socketId }) => {
     console.log("Save", roomId);
-    socket.in(roomId).emit(ACTIONS.START_SAVING, { roomId });
+    socket.in(roomId).emit(ACTIONS.START_SAVING, { roomId, socketId });
   });
   // Saved Code Event
   socket.on(ACTIONS.SAVED, ({ roomId }) => {
@@ -119,9 +119,9 @@ io.on("connection", (socket) => {
     socket.in(roomId).emit(ACTIONS.STOP_SAVING, { roomId });
   });
   // Run Code Event
-  socket.on(ACTIONS.RUN, ({ roomId }) => {
+  socket.on(ACTIONS.RUN, ({ roomId, socketId }) => {
     console.log("Run", roomId);
-    socket.in(roomId).emit(ACTIONS.START_RUNNING, { roomId });
+    socket.in(roomId).emit(ACTIONS.START_RUNNING, { roomId, socketId });
   });
   // Runned Code Event
   socket.on(ACTIONS.RUNNED, ({ roomId }) => {

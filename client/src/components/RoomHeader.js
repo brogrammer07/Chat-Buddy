@@ -91,24 +91,13 @@ const RoomHeader = ({
   // common response from paizo.io
   const compeletedStatus = "completed";
 
-  useEffect(() => {
-    if (running) {
-      socketRef.current.emit(ACTIONS.RUN, {
-        roomId,
-      });
-      runCode();
-    }
-  }, [running]);
-  useEffect(() => {
-    if (saving) {
-      socketRef.current.emit(ACTIONS.SAVE, {
-        roomId,
-      });
-      saveCode();
-    }
-  }, [saving]);
   // Save Code Handler
   const saveCode = async () => {
+    setSaving(true);
+    socketRef.current.emit(ACTIONS.SAVE, {
+      roomId,
+      socketId: socketRef.current.id,
+    });
     await axios
       .post(`${process.env.REACT_APP_SERVER_URL}/api/save`, {
         language: languageRef.current,
@@ -170,6 +159,11 @@ const RoomHeader = ({
   }, [submissionStatus]);
 
   const runCode = async () => {
+    setRunning(true);
+    socketRef.current.emit(ACTIONS.RUN, {
+      roomId,
+      socketId: socketRef.current.id,
+    });
     const params = {
       source_code: bodyRef.current,
       language: language,
@@ -281,7 +275,7 @@ const RoomHeader = ({
       <div className="flex space-x-5 md:w-[50%] w-full md:justify-end">
         <div className="md:w-[10rem] w-full">
           <button
-            onClick={() => setSaving(true)}
+            onClick={() => saveCode()}
             disabled={saving || running}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {saving ? "Saving" : "Save"}
@@ -289,7 +283,7 @@ const RoomHeader = ({
         </div>
         <div className="md:w-[10rem] w-full">
           <button
-            onClick={() => setRunning(true)}
+            onClick={() => runCode()}
             disabled={running || saving}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {running ? "Running" : "Run"}
