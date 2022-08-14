@@ -20,6 +20,8 @@ import axios from "axios";
 import Loader from "../utils/Loader";
 import ChatBox from "../utils/ChatBox";
 import NotificationSound from "../Assets/Message_Alert.mp3";
+import JoinSound from "../Assets/Join_Alert.mp3";
+import LeaveSound from "../Assets/Leave_Alert.mp3";
 const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,6 +31,9 @@ const Room = () => {
   const [minimize, setMinimize] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [newMessage, setNewMessage] = useState(false);
+  const messageAlertPlayer = useRef(null);
+  const joinAlertPlayer = useRef(null);
+  const leaveAlertPlayer = useRef(null);
   // Editor Options Modal
   const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
@@ -108,6 +113,7 @@ const Room = () => {
           ACTIONS.JOINED,
           ({ clients, username, socketId }) => {
             if (socketRef.current.id !== socketId) {
+              joinAlertPlayer.current.play();
               toast.info(`${username} joined the room.`);
               console.log(username, language);
               // Sync Clients with other clients
@@ -168,6 +174,7 @@ const Room = () => {
         });
         // Listening for disconnected
         socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
+          leaveAlertPlayer.current.play();
           toast.info(`${username} left the room.`);
           setClients((prev) => {
             return prev.filter((client) => client.socketId !== socketId);
@@ -230,10 +237,10 @@ const Room = () => {
     languageRef.current = e.target.value;
     setLanguage(e.target.value);
   };
-  const audioPlayer = useRef(null);
+
   useEffect(() => {
     if (messages.length !== 0 && !minimize && !openChat) {
-      audioPlayer.current.play();
+      messageAlertPlayer.current.play();
       setOpenChat(true);
       setMinimize(true);
       setNewMessage(true);
@@ -250,7 +257,9 @@ const Room = () => {
             <meta charSet="utf-8" />
             <title>Chat Buddy | {roomName}</title>
           </Helmet>
-          <audio ref={audioPlayer} src={NotificationSound} />
+          <audio ref={messageAlertPlayer} src={NotificationSound} />
+          <audio ref={joinAlertPlayer} src={JoinSound} />
+          <audio ref={leaveAlertPlayer} src={LeaveSound} />
           <ToastContainer />
           {openChat && (
             <ChatBox
