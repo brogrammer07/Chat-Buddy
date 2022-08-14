@@ -143,7 +143,7 @@ const RoomHeader = ({
 
       const outputQuery = params.toString();
       axios
-        .get(`http://api.paiza.io:80/runners/get_details?${outputQuery}`)
+        .get(`https://api.paiza.io/runners/get_details?${outputQuery}`)
         .then((res) => {
           console.log("output", res.data);
           const { stdout, stderr, build_stderr } = res.data;
@@ -172,7 +172,7 @@ const RoomHeader = ({
     };
 
     await axios
-      .post(`http://api.paiza.io:80/runners/create`, params)
+      .post(`https://api.paiza.io/runners/create`, params)
       .then((res) => {
         const { id, status } = res.data;
         setSubmissionID(id);
@@ -199,7 +199,7 @@ const RoomHeader = ({
 
     const statusQuery = params.toString();
     await axios
-      .get(`http://api.paiza.io:80/runners/get_status?${statusQuery}`)
+      .get(`https://api.paiza.io/runners/get_status?${statusQuery}`)
       .then((res) => {
         console.log("status", res.data);
         const { status } = res.data;
