@@ -111,7 +111,7 @@ const RoomHeader = ({
         setRunning(false);
       });
     }
-  }, [saving, running]);
+  }, []);
 
   useEffect(() => {
     if (running) {
