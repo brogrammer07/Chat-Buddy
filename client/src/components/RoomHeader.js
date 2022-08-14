@@ -73,61 +73,42 @@ const RoomHeader = ({
   socketRef,
   outputRef,
   setOutput,
+  setRunning,
+  running,
+  setSaving,
+  saving,
 }) => {
   // Modal states
   const language = useRecoilValue(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
   const [fontSize, setFontSize] = useRecoilState(fontSizeState);
   // Saving and Running State
-  const [saving, setSaving] = useState(false);
-  const [running, setRunning] = useState(false);
+
   const [submissionID, setSubmissionID] = useState("");
   const [submissionStatus, setSubmissionStatus] = useState(null);
   const [submissionCheckerID, setSubmissionCheckerId] = useState(null);
 
   // common response from paizo.io
-  const idleStatus = "Idle";
-  const runningStatus = "running";
   const compeletedStatus = "completed";
-  const errorStatus = "Some error occured";
-
-  useEffect(() => {
-    if (socketRef.current) {
-      // Listening for saving event
-      socketRef.current.on(ACTIONS.SAVE, () => {
-        setSaving(true);
-      });
-      // Listening for saved event
-      socketRef.current.on(ACTIONS.SAVED, () => {
-        toast.success("Code saved successfully");
-        setSaving(false);
-      });
-      // Listening for running event
-      socketRef.current.on(ACTIONS.RUN, () => {
-        setRunning(true);
-      });
-      // Listening for runned event
-      socketRef.current.on(ACTIONS.RUNNED, () => {
-        setRunning(false);
-      });
-    }
-  }, []);
 
   useEffect(() => {
     if (running) {
+      socketRef.current.emit(ACTIONS.RUN, {
+        roomId,
+      });
       runCode();
     }
   }, [running]);
   useEffect(() => {
     if (saving) {
+      socketRef.current.emit(ACTIONS.SAVE, {
+        roomId,
+      });
       saveCode();
     }
   }, [saving]);
   // Save Code Handler
   const saveCode = async () => {
-    socketRef.current.emit(ACTIONS.SAVE, {
-      roomId,
-    });
     await axios
       .post(`${process.env.REACT_APP_SERVER_URL}/api/save`, {
         language: languageRef.current,
@@ -189,9 +170,6 @@ const RoomHeader = ({
   }, [submissionStatus]);
 
   const runCode = async () => {
-    socketRef.current.emit(ACTIONS.RUN, {
-      roomId,
-    });
     const params = {
       source_code: bodyRef.current,
       language: language,

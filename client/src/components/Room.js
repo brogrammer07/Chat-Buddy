@@ -23,6 +23,8 @@ const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [messages, setMessages] = useState([]);
+  const [running, setRunning] = useState(false);
+  const [saving, setSaving] = useState(false);
   // Editor Options Modal
   const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
@@ -137,6 +139,23 @@ const Room = () => {
           setLanguage(language);
         });
 
+        // Listening for running event
+        socketRef.current.on(ACTIONS.START_RUNNING, (data) => {
+          setRunning(true);
+        });
+        // Listening for runned event
+        socketRef.current.on(ACTIONS.STOP_RUNNING, (data) => {
+          setRunning(false);
+        });
+        // Listening for saving event
+        socketRef.current.on(ACTIONS.START_SAVING, (data) => {
+          setSaving(true);
+        });
+        // Listening for saved event
+        socketRef.current.on(ACTIONS.STOP_SAVING, (data) => {
+          toast.success("Code saved successfully");
+          setSaving(false);
+        });
         // Listening for disconnected
         socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
           toast.info(`${username} left the room.`);
@@ -233,6 +252,10 @@ const Room = () => {
             socketRef={socketRef}
             output={output}
             setOutput={setOutput}
+            setRunning={setRunning}
+            running={running}
+            setSaving={setSaving}
+            saving={saving}
           />
           <Sidebar
             setOpenChat={setOpenChat}
