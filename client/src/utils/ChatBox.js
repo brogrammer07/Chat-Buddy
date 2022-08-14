@@ -4,6 +4,7 @@ import { FaRegWindowMinimize } from "react-icons/fa";
 import { BsChevronCompactUp, BsFillEmojiSmileFill } from "react-icons/bs";
 import Picker from "emoji-picker-react";
 import { ACTIONS } from "./Actions";
+import Typing from "./Typing";
 const ChatBox = ({
   setOpenChat,
   roomName,
@@ -15,8 +16,13 @@ const ChatBox = ({
 }) => {
   const [minimize, setMinimize] = useState(false);
   const [message, setMessage] = useState("");
-
+  const [typing, setTyping] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
   const bottomRef = useRef(null);
+  const handleChange = (e) => {
+    socketRef.current.emit(ACTIONS.TYPING, { username, roomId });
+    setMessage(e.target.value);
+  };
   const sendMessage = (e) => {
     e.preventDefault();
     socketRef.current.emit(ACTIONS.SEND_MESSAGE, {
@@ -42,11 +48,23 @@ const ChatBox = ({
       setMessages((list) => [...list, data]);
       console.log(data);
     });
+    socketRef.current.on(ACTIONS.TYPED, (data) => {
+      setIsTyping(true);
+      setTyping(data.username);
+    });
   }, []);
   useEffect(() => {
     console.log("Scroll");
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (isTyping) {
+      setTimeout(() => {
+        setIsTyping(false);
+      }, 2000);
+    }
+  }, [isTyping]);
   return (
     <div className="absolute bottom-2 z-10 right-32 w-[20rem] bg-[#272727] rounded-md flex flex-col">
       <div className="h-[3rem] border-b-[1px] border-[#3e3d3d] cursor-pointer flex items-center px-4 justify-between">
@@ -89,6 +107,14 @@ const ChatBox = ({
               )}
             </>
           ))}
+          {isTyping && (
+            <div className="flex space-x-2 w-full items-center">
+              <div className="rounded-full h-[2rem] w-[2rem] bg-red-600 flex items-center justify-center text-white self-end">
+                {typing.charAt(0)}
+              </div>
+              <Typing />
+            </div>
+          )}
           <div ref={bottomRef}></div>
         </div>
         <form
@@ -98,7 +124,7 @@ const ChatBox = ({
             <input
               onClick={() => setShowEmoji(false)}
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={handleChange}
               placeholder="Type a message"
               className="bg-[#3c3c3c] px-2 py-2 outline-none rounded-l-full w-full text-white h-[2.5rem] overflow-hidden"
             />

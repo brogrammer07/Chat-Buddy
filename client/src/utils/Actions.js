@@ -14,4 +14,6 @@ export const ACTIONS = {
   LEAVE: "leave",
   SEND_MESSAGE: "send-message",
   RECEIVE_MESSAGE: "receice-message",
+  TYPING: "typing",
+  TYPED: "typed",
 };
