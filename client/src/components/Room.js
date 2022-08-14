@@ -22,6 +22,7 @@ import ChatBox from "../utils/ChatBox";
 const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [messages, setMessages] = useState([]);
   // Editor Options Modal
   const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
@@ -211,7 +212,17 @@ const Room = () => {
             <title>Chat Buddy | {roomName}</title>
           </Helmet>
           <ToastContainer />
-          {openChat && <ChatBox setOpenChat={setOpenChat} />}
+          {openChat && (
+            <ChatBox
+              setOpenChat={setOpenChat}
+              roomName={roomName}
+              socketRef={socketRef}
+              roomId={roomId}
+              username={location.state?.username}
+              messages={messages}
+              setMessages={setMessages}
+            />
+          )}
           <RoomHeader
             handleLanguageChange={handleLanguageChange}
             inputRef={inputRef}

@@ -128,6 +128,13 @@ io.on("connection", (socket) => {
     console.log("Runned", roomId);
     socket.to(roomId).emit(ACTIONS.RUNNED);
   });
+  // Send Message Event
+  socket.on(ACTIONS.SEND_MESSAGE, ({ message, roomId, socketId, username }) => {
+    console.log("Send Message", message);
+    socket
+      .to(roomId)
+      .emit(ACTIONS.RECEIVE_MESSAGE, { message, socketId, username });
+  });
 
   // Disconnect Event
   socket.on("disconnecting", () => {

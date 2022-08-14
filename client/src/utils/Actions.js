@@ -12,4 +12,6 @@ export const ACTIONS = {
   RUN: "run",
   RUNNED: "runned",
   LEAVE: "leave",
+  SEND_MESSAGE: "send-message",
+  RECEIVE_MESSAGE: "receice-message",
 };
