@@ -175,6 +175,12 @@ const Room = () => {
     setOutput(value);
   };
 
+  useEffect(() => {
+    if (output) {
+      handleOutputChange(output);
+    }
+  }, [output]);
+
   // Handle Language Change
   const handleLanguageChange = (e) => {
     console.log("e", e.target.value);
@@ -199,11 +205,13 @@ const Room = () => {
             languageRef={languageRef}
             roomId={roomId}
             socketRef={socketRef}
+            output={output}
+            setOutput={setOutput}
           />
           <Sidebar users={clients} />
           <hr />
           <div className="flex h-full">
-            <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] h-[82vh]">
+            <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] h-[80vh]">
               <p className="text-white bg-[#434343] mx-auto">Code</p>
               <Editor
                 type={"body"}

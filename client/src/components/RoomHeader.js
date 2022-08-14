@@ -71,6 +71,8 @@ const RoomHeader = ({
   languageRef,
   inputRef,
   socketRef,
+  output,
+  setOutput,
 }) => {
   // Modal states
   const language = useRecoilValue(langaugeState);
@@ -79,6 +81,16 @@ const RoomHeader = ({
   // Saving and Running State
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
+  const [submissionID, setSubmissionID] = useState("");
+  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [submissionCheckerID, setSubmissionCheckerId] = useState(null);
+
+  // common response from paizo.io
+  const idleStatus = "Idle";
+  const runningStatus = "running";
+  const compeletedStatus = "completed";
+  const errorStatus = "Some error occured";
+
   useEffect(() => {
     // Listening for saving event
     if (socketRef.current) {
@@ -117,6 +129,87 @@ const RoomHeader = ({
         toast.error("Error in saving");
       });
   };
+
+  useEffect(() => {
+    if (submissionStatus == compeletedStatus && submissionCheckerID) {
+      // destroy the checker
+      clearInterval(submissionCheckerID);
+      setSubmissionCheckerId(null);
+
+      const params = new URLSearchParams({
+        id: submissionID,
+        api_key: "guest",
+      });
+
+      const outputQuery = params.toString();
+      axios
+        .get(`http://api.paiza.io:80/runners/get_details?${outputQuery}`)
+        .then((res) => {
+          console.log("output", res.data);
+          const { stdout, stderr, build_stderr } = res.data;
+          let newOutput = "";
+          if (stdout) newOutput += stdout;
+          if (stderr) newOutput += stderr;
+          if (build_stderr) newOutput += build_stderr;
+
+          if (newOutput) {
+            setOutput(newOutput);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [submissionStatus]);
+
+  const runCode = async () => {
+    console.log(bodyRef.current, inputRef.current, language);
+    const params = {
+      source_code: bodyRef.current,
+      language: language,
+      input: inputRef.current,
+      api_key: "guest",
+    };
+
+    await axios
+      .post(`http://api.paiza.io:80/runners/create`, params)
+      .then((res) => {
+        const { id, status } = res.data;
+        setSubmissionID(id);
+        setSubmissionStatus(status);
+      })
+      .catch((err) => {
+        console.log(err);
+        setSubmissionID("");
+        toast.error("Could not run code");
+      });
+  };
+
+  useEffect(() => {
+    if (submissionID) {
+      setSubmissionCheckerId(setInterval(() => checkSubmissionStatus(), 1000));
+    }
+  }, [submissionID]);
+
+  const checkSubmissionStatus = async () => {
+    const params = new URLSearchParams({
+      id: submissionID,
+      api_key: "guest",
+    });
+
+    const statusQuery = params.toString();
+    await axios
+      .get(`http://api.paiza.io:80/runners/get_status?${statusQuery}`)
+      .then((res) => {
+        console.log("status", res.data);
+        const { status } = res.data;
+        setSubmissionStatus(status);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div className="flex text-[#5b5b5b] space-x-16 h-[30rem] px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
       <div className="w-[10rem]">
@@ -130,7 +223,8 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={language}
             label="Choose Language"
-            onChange={handleLanguageChange}>
+            onChange={handleLanguageChange}
+          >
             {langauges.map((lang, i) => (
               <MenuItem key={i} value={lang[1]}>
                 {lang[0]}
@@ -150,7 +244,8 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={theme}
             label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}>
+            onChange={(e) => setTheme(e.target.value)}
+          >
             {themes.map((theme, i) => (
               <MenuItem key={i} value={theme}>
                 {theme}
@@ -170,7 +265,8 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={fontSize}
             label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}>
+            onChange={(e) => setFontSize(e.target.value)}
+          >
             {fontSizes.map((size, i) => (
               <MenuItem key={i} value={size}>
                 {size}
@@ -183,14 +279,16 @@ const RoomHeader = ({
         <div className="w-[10rem]">
           <button
             onClick={() => saveCode()}
-            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
+          >
             {saving ? "Saving" : "Save"}
           </button>
         </div>
         <div className="w-[10rem]">
           <button
-            onClick={() => saveCode()}
-            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            onClick={() => runCode()}
+            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
+          >
             {running ? "Running" : "Run"}
           </button>
         </div>
