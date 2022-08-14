@@ -51,7 +51,7 @@ function getAllConnectedClients(roomId) {
       };
     }
   );
-}username;
+}
 
 // Socket Connection
 
@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
 
   // Join Room Event
   socket.on(ACTIONS.JOIN, ({ roomId, username }) => {
-    userSocketMap[socket.id] = 
+    userSocketMap[socket.id] = username;
     socket.join(roomId);
     console.log(`${username} joined ${roomId}`);
     const clients = getAllConnectedClients(roomId);

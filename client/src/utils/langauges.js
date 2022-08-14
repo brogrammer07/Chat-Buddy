@@ -1,6 +1,6 @@
 export const allLangauges = {
   c: "c_cpp",
-  cpp: "c_cpp",
+  cpp: "cpp",
   python: "python",
   python3: "python",
   java: "java",
