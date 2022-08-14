@@ -111,10 +111,20 @@ const RoomHeader = ({
         setRunning(false);
       });
     }
-  }, []);
+  }, [saving, running]);
+
+  useEffect(() => {
+    if (running) {
+      runCode();
+    }
+  }, [running]);
+  useEffect(() => {
+    if (saving) {
+      saveCode();
+    }
+  }, [saving]);
   // Save Code Handler
   const saveCode = async () => {
-    setSaving(true);
     socketRef.current.emit(ACTIONS.SAVE, {
       roomId,
     });
@@ -179,7 +189,6 @@ const RoomHeader = ({
   }, [submissionStatus]);
 
   const runCode = async () => {
-    setRunning(true);
     socketRef.current.emit(ACTIONS.RUN, {
       roomId,
     });
@@ -294,7 +303,7 @@ const RoomHeader = ({
       <div className="flex space-x-5 md:w-[50%] w-full md:justify-end">
         <div className="md:w-[10rem] w-full">
           <button
-            onClick={() => saveCode()}
+            onClick={() => setSaving(true)}
             disabled={saving || running}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {saving ? "Saving" : "Save"}
@@ -302,7 +311,7 @@ const RoomHeader = ({
         </div>
         <div className="md:w-[10rem] w-full">
           <button
-            onClick={() => runCode()}
+            onClick={() => setRunning(true)}
             disabled={running || saving}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {running ? "Running" : "Run"}

@@ -219,7 +219,7 @@ const Room = () => {
             output={output}
             setOutput={setOutput}
           />
-          <Sidebar users={clients} />
+          <Sidebar roomName={roomName} users={clients} />
           <hr />
           <div className="flex lg:flex-row flex-col overflow-y-auto lg:overflow-y-hidden bg-[#434343]">
             <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] lg:h-[80vh]">

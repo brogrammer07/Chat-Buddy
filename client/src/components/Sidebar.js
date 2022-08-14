@@ -3,7 +3,7 @@ import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
-const Sidebar = ({ users }) => {
+const Sidebar = ({ users, roomName }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ const Sidebar = ({ users }) => {
         <div className="">
           <div className=" border-b-[1px] border-[#313131] pb-4">
             <h1 className="font-bold text-[2rem]">Chat Buddy</h1>
-            <p className="text-[#1d90f5]">Coding Collaboration</p>
+            <p className="text-[#1d90f5]">Room - {roomName}</p>
           </div>
           <div className="py-3 space-y-3">
             <h2 className="font-semibold text-[18px]">Connected</h2>
