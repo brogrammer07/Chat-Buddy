@@ -18,7 +18,7 @@ const Sidebar = ({ users }) => {
         <div className="">
           <div className=" border-b-[1px] border-[#313131] pb-4">
             <h1 className="font-bold text-[2rem]">Chat Buddy</h1>
-            <p className="text-[#1d90f5]">Realtime Collaboration</p>
+            <p className="text-[#1d90f5]">Coding Collaboration</p>
           </div>
           <div className="py-3 space-y-3">
             <h2 className="font-semibold text-[18px]">Connected</h2>
@@ -26,7 +26,7 @@ const Sidebar = ({ users }) => {
               {users.map((user, i) => (
                 <div
                   className="flex flex-col items-center space-y-1 h-[5rem]"
-                  key={user.id}>
+                  key={i}>
                   <div className="bg-red-600 flex items-center justify-center w-[3rem] h-[3rem] rounded-xl text-[20px] font-bold">
                     {user.username.charAt(0)}
                   </div>

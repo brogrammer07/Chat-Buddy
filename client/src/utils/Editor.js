@@ -54,6 +54,7 @@ const Editor = ({
         name="UNIQUE_ID_OF_DIV"
         showGutter={true}
         editorProps={{ $blockScrolling: true }}
+        showPrintMargin={false}
         setOptions={{
           enableBasicAutocompletion: true,
           enableLiveAutocompletion: true,

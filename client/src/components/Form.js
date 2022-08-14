@@ -9,15 +9,19 @@ import { userState } from "../atoms/userModal";
 const Form = () => {
   const [isJoin, setIsJoin] = useRecoilState(formState);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [user, setUser] = useRecoilState(userState);
   const [formData, setFormData] = useState({
     username: "",
     roomId: "",
     roomName: "",
   });
-
   const handleJoinSubmit = (e) => {
     e.preventDefault();
+    localStorage.setItem(
+      "room",
+      JSON.stringify({ roomName: "", roomId: formData.roomId })
+    );
     navigate(`/room/${formData.roomId}`, {
       state: {
         username: formData.username,
@@ -26,15 +30,21 @@ const Form = () => {
   };
   const handleCreateSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log(process.env.REACT_APP_SERVER_URL);
     await axios
       .post(`${process.env.REACT_APP_SERVER_URL}/api/createroom`, {
         name: formData.roomName,
       })
       .then((res) => {
+        setLoading(false);
+        localStorage.setItem(
+          "room",
+          JSON.stringify({ roomName: "", roomId: res.data.roomId })
+        );
         navigate(`/room/${res.data.roomId}`, {
           state: {
-            username: res.data.username,
+            username: formData.username,
           },
         });
       })
@@ -45,10 +55,8 @@ const Form = () => {
   };
   return (
     <div className="px-24  text-white my-auto">
-      <h1 className="text-[2rem] font-bold">Realtime Collaboration</h1>
-      {/* <p className="font-semibold  text-[#1d90f5] text-[1rem]">
-        {isJoin ? "Join Room" : "Create Room"}
-      </p> */}
+      <h1 className="text-[2rem] font-bold">Coding Collaboration</h1>
+
       {isJoin ? (
         <form
           onSubmit={handleJoinSubmit}
@@ -109,7 +117,7 @@ const Form = () => {
           />
 
           <button className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all">
-            Create
+            {loading ? "Creating" : "Create"}
           </button>
           <div className="space-x-1 flex">
             <p className="font-thin opacity-80">Have a Room ID? </p>
