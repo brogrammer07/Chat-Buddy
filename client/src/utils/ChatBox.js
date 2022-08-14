@@ -46,6 +46,7 @@ const ChatBox = ({
   useEffect(() => {
     socketRef.current.on(ACTIONS.RECEIVE_MESSAGE, (data) => {
       setMessages((list) => [...list, data]);
+      setIsTyping(false);
       console.log(data);
     });
     socketRef.current.on(ACTIONS.TYPED, (data) => {

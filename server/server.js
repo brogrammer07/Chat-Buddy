@@ -138,7 +138,7 @@ io.on("connection", (socket) => {
   // Typing Event
   socket.on(ACTIONS.TYPING, ({ roomId, username }) => {
     console.log("Typing", username);
-    socket.to(roomId).emit(ACTIONS.TYPED, { username, roomId });
+    socket.in(roomId).emit(ACTIONS.TYPED, { username, roomId });
   });
 
   // Disconnect Event
