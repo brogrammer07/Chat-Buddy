@@ -211,8 +211,8 @@ const RoomHeader = ({
   };
 
   return (
-    <div className="flex text-[#5b5b5b] space-x-16 h-[30rem] px-8 pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
-      <div className="w-[10rem]">
+    <div className="flex md:flex-row flex-col text-[#5b5b5b] lg:space-x-16 md:space-x-4 space-y-3 md:space-y-0 px-8 lg:pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
+      <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
           <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
             Choose Language
@@ -233,7 +233,7 @@ const RoomHeader = ({
           </Select>
         </FormControl>
       </div>
-      <div className="w-[10rem]">
+      <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
           <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
             Choose Theme
@@ -254,7 +254,7 @@ const RoomHeader = ({
           </Select>
         </FormControl>
       </div>
-      <div className="w-[10rem]">
+      <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
           <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
             Choose Font Size
@@ -275,19 +275,19 @@ const RoomHeader = ({
           </Select>
         </FormControl>
       </div>
-      <div className="flex space-x-5 ">
-        <div className="w-[10rem]">
+      <div className="flex space-x-5 md:w-[50%] w-full md:justify-end">
+        <div className="md:w-[10rem] w-full">
           <button
             onClick={() => saveCode()}
-            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
+            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
           >
             {saving ? "Saving" : "Save"}
           </button>
         </div>
-        <div className="w-[10rem]">
+        <div className="md:w-[10rem] w-full">
           <button
             onClick={() => runCode()}
-            className="rounded-md w-[10rem] bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
+            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
           >
             {running ? "Running" : "Run"}
           </button>

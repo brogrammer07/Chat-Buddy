@@ -196,7 +196,7 @@ const Room = () => {
       {loading ? (
         <Loader />
       ) : (
-        <div className="w-full h-screen flex flex-col bg-[#272A37] overflow-hidden relative">
+        <div className="w-full h-screen flex flex-col bg-[#434343] overflow-hidden relative">
           <ToastContainer />
           <RoomHeader
             handleLanguageChange={handleLanguageChange}
@@ -210,8 +210,8 @@ const Room = () => {
           />
           <Sidebar users={clients} />
           <hr />
-          <div className="flex h-full">
-            <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] h-[80vh]">
+          <div className="flex lg:flex-row flex-col overflow-y-auto lg:overflow-y-hidden bg-[#434343]">
+            <div className="flex-[0.7] border-[1rem] border-b-[2rem] border-l-[3rem] border-[#434343] lg:h-[80vh]">
               <p className="text-white bg-[#434343] mx-auto">Code</p>
               <Editor
                 type={"body"}
@@ -225,7 +225,9 @@ const Room = () => {
             </div>
             <div className="flex-[0.3] flex flex-col border-r-[1rem] border-b-[1rem] border-[#434343] h-[82vh]">
               <div className="border-[1rem] border-[#434343] h-full ">
-                <p className="text-white bg-[#434343] mx-auto">Input</p>
+                <p className="text-white bg-[#434343] mx-auto pl-[2rem] lg:pl-0">
+                  Input
+                </p>
                 <Editor
                   type={"input"}
                   theme={theme}
@@ -238,7 +240,9 @@ const Room = () => {
                 />
               </div>
               <div className="border-[1rem] border-t-0 border-[#434343] h-full">
-                <p className="text-white bg-[#434343] mx-auto">Output</p>
+                <p className="text-white bg-[#434343] mx-auto pl-[2rem] lg:pl-0">
+                  Output
+                </p>
                 <Editor
                   type={"output"}
                   theme={theme}
