@@ -3,7 +3,7 @@ import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 
-const Sidebar = ({ users, roomName }) => {
+const Sidebar = ({ users, roomName, setOpenChat }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -37,6 +37,16 @@ const Sidebar = ({ users, roomName }) => {
           </div>
         </div>
         <div className="flex flex-col space-y-3 items-center">
+          <div className="flex space-x-3 w-full">
+            <button
+              onClick={() => setOpenChat(true)}
+              className="bg-[#1eb58f] text-white w-full font-bold rounded-xl py-2 hover:bg-[#12775e] duration-150 transition-all">
+              CHAT
+            </button>
+            <button className="bg-[#2089be] w-full text-white font-bold rounded-xl py-2 hover:bg-[#166085] duration-150 transition-all">
+              AUDIO
+            </button>
+          </div>
           <button
             onClick={() => {
               navigator.clipboard.writeText(roomId);

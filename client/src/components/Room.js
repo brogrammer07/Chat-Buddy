@@ -18,6 +18,7 @@ import { ACTIONS } from "../utils/Actions";
 import { Helmet } from "react-helmet";
 import axios from "axios";
 import Loader from "../utils/Loader";
+import ChatBox from "../utils/ChatBox";
 const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,6 +27,7 @@ const Room = () => {
   const fontSize = useRecoilValue(fontSizeState);
   const theme = useRecoilValue(themeState);
   const [roomName, setRoomName] = useState("Room");
+  const [openChat, setOpenChat] = useState(false);
   const languageRef = useRef(null);
   // Body, Input, Output with their respective refs
   const [body, setBody] = useState("");
@@ -209,6 +211,7 @@ const Room = () => {
             <title>Chat Buddy | {roomName}</title>
           </Helmet>
           <ToastContainer />
+          {openChat && <ChatBox setOpenChat={setOpenChat} />}
           <RoomHeader
             handleLanguageChange={handleLanguageChange}
             inputRef={inputRef}
@@ -220,7 +223,11 @@ const Room = () => {
             output={output}
             setOutput={setOutput}
           />
-          <Sidebar roomName={roomName} users={clients} />
+          <Sidebar
+            setOpenChat={setOpenChat}
+            roomName={roomName}
+            users={clients}
+          />
           <hr />
           <div className="flex lg:flex-row flex-col overflow-y-auto lg:overflow-y-hidden bg-[#434343]">
             <div className="flex-[0.7] border-l-[2rem] md:border-[1rem] border-b-[2rem] md:border-l-[3rem] border-[#434343] lg:h-[80vh]">
