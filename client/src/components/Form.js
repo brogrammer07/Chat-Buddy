@@ -54,13 +54,13 @@ const Form = () => {
       });
   };
   return (
-    <div className="px-24  text-white my-auto">
-      <h1 className="text-[2rem] font-bold">Coding Collaboration</h1>
+    <div className="px-8 sm:px-24  text-white my-auto">
+      <h1 className="text-[2rem] font-bold ">Coding Collaboration</h1>
 
       {isJoin ? (
         <form
           onSubmit={handleJoinSubmit}
-          className="flex flex-col w-[45%] space-y-4">
+          className="flex flex-col sm:w-[45%] space-y-4">
           <ToastContainer />
           <input
             required
@@ -99,11 +99,11 @@ const Form = () => {
       ) : (
         <form
           onSubmit={handleCreateSubmit}
-          className="flex flex-col w-[45%] space-y-4">
+          className="flex flex-col sm:w-[45%] space-y-4">
           <ToastContainer />
           <input
             required
-            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
+            className="w-[20rem] rounded-xl outline-none px-4 py-2   bg-[#323644] focus:bg-[#5b5b5b]"
             type="text"
             value={formData.username}
             onChange={(e) =>

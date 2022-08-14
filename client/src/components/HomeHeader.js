@@ -19,7 +19,7 @@ const HomeHeader = () => {
     });
   };
   return (
-    <div className="flex text-[#5b5b5b] space-x-16 px-8 pl-24 py-10 w-full font-semibold text-[1.2rem]">
+    <div className="flex text-[#5b5b5b] justify-between sm:justify-start sm:space-x-16 px-8 sm:pl-24 py-10 w-full font-semibold text-[1.2rem]">
       <div className="cursor-pointer text-white">Chat Buddy</div>
 
       <div
@@ -44,7 +44,7 @@ const HomeHeader = () => {
         {showHistory && (
           <>
             {historyRoom.length !== 0 ? (
-              <div className="w-[15rem]  rounded-md  bg-[#1c1d23] -right-[140%]  border-[#404040] text-black absolute flex flex-col items-center space-y-3 backdrop-blur-xl shadow-xl py-4 pb-7">
+              <div className="w-[15rem]  rounded-md  bg-[#1c1d23] -right-[30%] md:-right-[140%]  border-[#404040] text-black absolute flex flex-col items-center space-y-3 backdrop-blur-xl shadow-xl py-4 pb-7">
                 <div className=" text-[#1d90f5] font-bold">
                   {historyRoom.roomName}
                 </div>
