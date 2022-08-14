@@ -295,6 +295,7 @@ const RoomHeader = ({
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => saveCode()}
+            disabled={saving || running}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {saving ? "Saving" : "Save"}
           </button>
@@ -302,6 +303,7 @@ const RoomHeader = ({
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => runCode()}
+            disabled={running || saving}
             className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {running ? "Running" : "Run"}
           </button>

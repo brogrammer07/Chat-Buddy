@@ -13,6 +13,7 @@
     "react": "^18.2.0",
     "react-ace": "^10.1.0",
     "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
     "react-loading-screen": "0.0.17",
     "react-reflex": "^4.0.9",

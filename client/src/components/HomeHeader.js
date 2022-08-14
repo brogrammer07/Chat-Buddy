@@ -39,9 +39,7 @@ const HomeHeader = () => {
       <div
         onMouseEnter={() => setShowHistory(true)}
         onMouseLeave={() => setShowHistory(false)}
-        className={`cursor-pointer ${
-          !isJoin && "text-white"
-        } hover:text-white duration-200 transition-all relative`}>
+        className={`cursor-pointer  hover:text-white duration-200 transition-all relative`}>
         <p>History</p>
         {showHistory && (
           <>

@@ -15,6 +15,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { initSocket } from "../utils/socket";
 import { ACTIONS } from "../utils/Actions";
+import { Helmet } from "react-helmet";
 import axios from "axios";
 import Loader from "../utils/Loader";
 const Room = () => {
@@ -24,6 +25,7 @@ const Room = () => {
   const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
   const theme = useRecoilValue(themeState);
+  const [roomName, setRoomName] = useState("Room");
   const languageRef = useRef(null);
   // Body, Input, Output with their respective refs
   const [body, setBody] = useState("");
@@ -59,6 +61,7 @@ const Room = () => {
           data.roomName = res.data.name;
           localStorage.setItem("room", JSON.stringify(data));
           setLoading(false);
+          setRoomName(res.data.name);
           setBody(res.data.body);
           setInput(res.data.input);
           setLanguage(res.data.language);
@@ -200,6 +203,10 @@ const Room = () => {
         <Loader />
       ) : (
         <div className="w-full h-screen flex flex-col bg-[#434343] overflow-hidden relative">
+          <Helmet>
+            <meta charSet="utf-8" />
+            <title>Chat Buddy | {roomName}</title>
+          </Helmet>
           <ToastContainer />
           <RoomHeader
             handleLanguageChange={handleLanguageChange}
