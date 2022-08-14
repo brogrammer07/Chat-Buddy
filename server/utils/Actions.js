@@ -9,5 +9,7 @@ export const ACTIONS = {
   SYNC_CODE: "sync-code",
   SAVE: "save",
   SAVED: "saved",
+  RUN: "run",
+  RUNNED: "runned",
   LEAVE: "leave",
 };

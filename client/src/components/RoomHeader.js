@@ -71,7 +71,7 @@ const RoomHeader = ({
   languageRef,
   inputRef,
   socketRef,
-  output,
+  outputRef,
   setOutput,
 }) => {
   // Modal states
@@ -92,8 +92,8 @@ const RoomHeader = ({
   const errorStatus = "Some error occured";
 
   useEffect(() => {
-    // Listening for saving event
     if (socketRef.current) {
+      // Listening for saving event
       socketRef.current.on(ACTIONS.SAVE, () => {
         setSaving(true);
       });
@@ -101,6 +101,14 @@ const RoomHeader = ({
       socketRef.current.on(ACTIONS.SAVED, () => {
         toast.success("Code saved successfully");
         setSaving(false);
+      });
+      // Listening for running event
+      socketRef.current.on(ACTIONS.RUN, () => {
+        setRunning(true);
+      });
+      // Listening for runned event
+      socketRef.current.on(ACTIONS.RUNNED, () => {
+        setRunning(false);
       });
     }
   }, []);
@@ -151,19 +159,30 @@ const RoomHeader = ({
           if (stdout) newOutput += stdout;
           if (stderr) newOutput += stderr;
           if (build_stderr) newOutput += build_stderr;
-
+          setRunning(false);
+          socketRef.current.emit(ACTIONS.RUNNED, {
+            roomId,
+          });
           if (newOutput) {
             setOutput(newOutput);
+            outputRef.current = newOutput;
           }
         })
         .catch((err) => {
-          console.log(err);
+          setRunning(false);
+          toast.error("Error in running");
+          socketRef.current.emit(ACTIONS.RUNNED, {
+            roomId,
+          });
         });
     }
   }, [submissionStatus]);
 
   const runCode = async () => {
-    console.log(bodyRef.current, inputRef.current, language);
+    setRunning(true);
+    socketRef.current.emit(ACTIONS.RUN, {
+      roomId,
+    });
     const params = {
       source_code: bodyRef.current,
       language: language,
@@ -223,8 +242,7 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={language}
             label="Choose Language"
-            onChange={handleLanguageChange}
-          >
+            onChange={handleLanguageChange}>
             {langauges.map((lang, i) => (
               <MenuItem key={i} value={lang[1]}>
                 {lang[0]}
@@ -244,8 +262,7 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={theme}
             label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}
-          >
+            onChange={(e) => setTheme(e.target.value)}>
             {themes.map((theme, i) => (
               <MenuItem key={i} value={theme}>
                 {theme}
@@ -265,8 +282,7 @@ const RoomHeader = ({
             id="demo-simple-select"
             value={fontSize}
             label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}
-          >
+            onChange={(e) => setFontSize(e.target.value)}>
             {fontSizes.map((size, i) => (
               <MenuItem key={i} value={size}>
                 {size}
@@ -279,16 +295,14 @@ const RoomHeader = ({
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => saveCode()}
-            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
-          >
+            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {saving ? "Saving" : "Save"}
           </button>
         </div>
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => runCode()}
-            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all"
-          >
+            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
             {running ? "Running" : "Run"}
           </button>
         </div>

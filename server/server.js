@@ -118,6 +118,16 @@ io.on("connection", (socket) => {
     console.log("Saved", roomId);
     socket.to(roomId).emit(ACTIONS.SAVED);
   });
+  // Run Code Event
+  socket.on(ACTIONS.RUN, ({ roomId }) => {
+    console.log("Run", roomId);
+    socket.to(roomId).emit(ACTIONS.RUN);
+  });
+  // Runned Code Event
+  socket.on(ACTIONS.RUNNED, ({ roomId }) => {
+    console.log("Runned", roomId);
+    socket.to(roomId).emit(ACTIONS.RUNNED);
+  });
 
   // Disconnect Event
   socket.on("disconnecting", () => {

@@ -63,6 +63,7 @@ const Form = () => {
           className="flex flex-col w-[45%] space-y-4">
           <ToastContainer />
           <input
+            required
             className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
             type="text"
             value={formData.username}
@@ -72,6 +73,7 @@ const Form = () => {
             placeholder="Username"
           />
           <input
+            required
             className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
             value={formData.roomId}
             onChange={(e) =>
@@ -80,7 +82,9 @@ const Form = () => {
             type="text"
             placeholder="Room ID"
           />
-          <button className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all ">
+          <button
+            type="submit"
+            className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all ">
             Join
           </button>
           <div className="space-x-1 flex">
@@ -98,6 +102,7 @@ const Form = () => {
           className="flex flex-col w-[45%] space-y-4">
           <ToastContainer />
           <input
+            required
             className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
             type="text"
             value={formData.username}
@@ -107,6 +112,7 @@ const Form = () => {
             placeholder="Username"
           />
           <input
+            required
             className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
             type="text"
             value={formData.roomName}
@@ -116,7 +122,9 @@ const Form = () => {
             placeholder="Room Name"
           />
 
-          <button className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all">
+          <button
+            type="submit"
+            className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all">
             {loading ? "Creating" : "Create"}
           </button>
           <div className="space-x-1 flex">

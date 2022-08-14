@@ -11,14 +11,14 @@ import "./Room.css";
 
 import RoomHeader from "./RoomHeader";
 import Sidebar from "./Sidebar";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { initSocket } from "../utils/socket";
 import { ACTIONS } from "../utils/Actions";
 import axios from "axios";
 import Loader from "../utils/Loader";
 const Room = () => {
-  const navigate = useLocation();
+  const navigate = useNavigate();
   const location = useLocation();
   // Editor Options Modal
   const [language, setLanguage] = useRecoilState(langaugeState);
@@ -46,6 +46,9 @@ const Room = () => {
 
   // Get Room Details from DB and set it to state
   useEffect(() => {
+    if (location.state === null) {
+      navigate("/");
+    }
     const getRoomData = async () => {
       await axios
         .post(`${process.env.REACT_APP_SERVER_URL}/api/getroomdata`, {
@@ -201,6 +204,7 @@ const Room = () => {
           <RoomHeader
             handleLanguageChange={handleLanguageChange}
             inputRef={inputRef}
+            outputRef={outputRef}
             bodyRef={bodyRef}
             languageRef={languageRef}
             roomId={roomId}
