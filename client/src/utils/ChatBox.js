@@ -13,11 +13,16 @@ const ChatBox = ({
   username,
   setMessages,
   messages,
+  setIsTyping,
+  isTyping,
+  minimize,
+  setMinimize,
+  setNewMessage,
+  newMessage,
 }) => {
-  const [minimize, setMinimize] = useState(false);
   const [message, setMessage] = useState("");
   const [typing, setTyping] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
+
   const bottomRef = useRef(null);
   const handleChange = (e) => {
     socketRef.current.emit(ACTIONS.TYPING, { username, roomId });
@@ -44,11 +49,6 @@ const ChatBox = ({
   };
 
   useEffect(() => {
-    socketRef.current.on(ACTIONS.RECEIVE_MESSAGE, (data) => {
-      setMessages((list) => [...list, data]);
-      setIsTyping(false);
-      console.log(data);
-    });
     socketRef.current.on(ACTIONS.TYPED, (data) => {
       setIsTyping(true);
       setTyping(data.username);
@@ -69,17 +69,36 @@ const ChatBox = ({
   return (
     <div className="absolute bottom-2 z-10 right-32 w-[20rem] bg-[#272727] rounded-md flex flex-col">
       <div className="h-[3rem] border-b-[1px] border-[#3e3d3d] cursor-pointer flex items-center px-4 justify-between">
-        <div className="text-[#dedede]">Room - {roomName}</div>
+        <div className="text-[#dedede] flex space-x-4">
+          <span>Room - {roomName}</span>
+          {newMessage && (
+            <div className="rounded-full  text-white bg-red-600 flex items-center justify-center text-center h-[25px] w-[25px]">
+              1
+            </div>
+          )}
+        </div>
         <div className="text-[#1d90f5] flex space-x-3 ">
           {minimize ? (
-            <BsChevronCompactUp size={30} onClick={() => setMinimize(false)} />
+            <BsChevronCompactUp
+              size={30}
+              onClick={() => {
+                setMinimize(false);
+                setNewMessage(false);
+              }}
+            />
           ) : (
             <FaRegWindowMinimize
               onClick={() => setMinimize(!minimize)}
               size={20}
             />
           )}
-          <MdClose onClick={() => setOpenChat(false)} size={30} />
+          <MdClose
+            onClick={() => {
+              setOpenChat(false);
+              setMinimize(false);
+            }}
+            size={30}
+          />
         </div>
       </div>
       <div hidden={minimize} className="h-[22rem] relative">

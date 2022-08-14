@@ -19,12 +19,16 @@ import { Helmet } from "react-helmet";
 import axios from "axios";
 import Loader from "../utils/Loader";
 import ChatBox from "../utils/ChatBox";
+import NotificationSound from "../Assets/Message_Alert.mp3";
 const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [messages, setMessages] = useState([]);
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [minimize, setMinimize] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [newMessage, setNewMessage] = useState(false);
   // Editor Options Modal
   const [language, setLanguage] = useRecoilState(langaugeState);
   const fontSize = useRecoilValue(fontSizeState);
@@ -156,6 +160,12 @@ const Room = () => {
           toast.success("Code saved successfully");
           setSaving(false);
         });
+        // Listening for Message event
+        socketRef.current.on(ACTIONS.RECEIVE_MESSAGE, (data) => {
+          setMessages((list) => [...list, data]);
+          setIsTyping(false);
+          console.log(data);
+        });
         // Listening for disconnected
         socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
           toast.info(`${username} left the room.`);
@@ -220,6 +230,16 @@ const Room = () => {
     languageRef.current = e.target.value;
     setLanguage(e.target.value);
   };
+  const audioPlayer = useRef(null);
+  useEffect(() => {
+    if (messages.length !== 0 && !minimize && !openChat) {
+      audioPlayer.current.play();
+      setOpenChat(true);
+      setMinimize(true);
+      setNewMessage(true);
+    }
+  }, [messages]);
+  console.log(messages);
   return (
     <>
       {loading ? (
@@ -230,6 +250,7 @@ const Room = () => {
             <meta charSet="utf-8" />
             <title>Chat Buddy | {roomName}</title>
           </Helmet>
+          <audio ref={audioPlayer} src={NotificationSound} />
           <ToastContainer />
           {openChat && (
             <ChatBox
@@ -240,6 +261,12 @@ const Room = () => {
               username={location.state?.username}
               messages={messages}
               setMessages={setMessages}
+              isTyping={isTyping}
+              setIsTyping={setIsTyping}
+              minimize={minimize}
+              setMinimize={setMinimize}
+              newMessage={newMessage}
+              setNewMessage={setNewMessage}
             />
           )}
           <RoomHeader
