@@ -111,22 +111,22 @@ io.on("connection", (socket) => {
   // Save Code Event
   socket.on(ACTIONS.SAVE, ({ roomId }) => {
     console.log("Save", roomId);
-    socket.to(roomId).emit(ACTIONS.SAVE);
+    socket.in(roomId).emit(ACTIONS.SAVE);
   });
   // Saved Code Event
   socket.on(ACTIONS.SAVED, ({ roomId }) => {
     console.log("Saved", roomId);
-    socket.to(roomId).emit(ACTIONS.SAVED);
+    socket.in(roomId).emit(ACTIONS.SAVED);
   });
   // Run Code Event
   socket.on(ACTIONS.RUN, ({ roomId }) => {
     console.log("Run", roomId);
-    socket.to(roomId).emit(ACTIONS.RUN);
+    socket.in(roomId).emit(ACTIONS.RUN);
   });
   // Runned Code Event
   socket.on(ACTIONS.RUNNED, ({ roomId }) => {
     console.log("Runned", roomId);
-    socket.to(roomId).emit(ACTIONS.RUNNED);
+    socket.in(roomId).emit(ACTIONS.RUNNED);
   });
   // Send Message Event
   socket.on(ACTIONS.SEND_MESSAGE, ({ message, roomId, socketId, username }) => {
