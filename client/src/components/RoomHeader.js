@@ -13,8 +13,9 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ACTIONS } from "../utils/Actions";
-import { ThemeSwitch } from "../utils/Switches";
+import { SoundSwitch, ThemeSwitch } from "../utils/Switches";
 import { ThemeContext } from "../utils/ThemeFunction";
+import { sound } from "../atoms/soundModal";
 const langauges = Object.entries(allLangauges);
 const themes = [
   "monokai",
@@ -81,6 +82,7 @@ const RoomHeader = ({
   saving,
 }) => {
   const { themeMode, setThemeMode } = React.useContext(ThemeContext);
+  const [soundToggle, setSoundToggle] = useRecoilState(sound);
   // Modal states
   const language = useRecoilValue(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
@@ -217,74 +219,131 @@ const RoomHeader = ({
     <div className="flex md:flex-row flex-col text-[#5b5b5b] lg:space-x-16 md:space-x-4 space-y-3 md:space-y-0 px-8 lg:pl-24 py-10 w-full font-semibold text-[1.2rem] bg-white  dark:bg-[#2c2e3f]">
       <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
-          <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
+          <InputLabel
+            sx={{ color: themeMode === "dark" ? "white" : "" }}
+            id="demo-simple-select-label">
             Choose Language
           </InputLabel>
-          <Select
-            sx={style}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={language}
-            label="Choose Language"
-            onChange={handleLanguageChange}>
-            {langauges.map((lang, i) => (
-              <MenuItem key={i} value={lang[1]}>
-                {lang[0]}
-              </MenuItem>
-            ))}
-          </Select>
+          {themeMode === "dark" ? (
+            <Select
+              sx={style}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={language}
+              label="Choose Language"
+              onChange={handleLanguageChange}>
+              {langauges.map((lang, i) => (
+                <MenuItem key={i} value={lang[1]}>
+                  {lang[0]}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={language}
+              label="Choose Language"
+              onChange={handleLanguageChange}>
+              {langauges.map((lang, i) => (
+                <MenuItem key={i} value={lang[1]}>
+                  {lang[0]}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
         </FormControl>
       </div>
       <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
-          <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
+          <InputLabel
+            sx={{ color: themeMode === "dark" ? "white" : "" }}
+            id="demo-simple-select-label">
             Choose Theme
           </InputLabel>
-          <Select
-            sx={style}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={theme}
-            label="Choose Theme"
-            onChange={(e) => setTheme(e.target.value)}>
-            {themes.map((theme, i) => (
-              <MenuItem key={i} value={theme}>
-                {theme}
-              </MenuItem>
-            ))}
-          </Select>
+          {themeMode === "dark" ? (
+            <Select
+              sx={style}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={theme}
+              label="Choose Theme"
+              onChange={(e) => setTheme(e.target.value)}>
+              {themes.map((theme, i) => (
+                <MenuItem key={i} value={theme}>
+                  {theme}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={theme}
+              label="Choose Theme"
+              onChange={(e) => setTheme(e.target.value)}>
+              {themes.map((theme, i) => (
+                <MenuItem key={i} value={theme}>
+                  {theme}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
         </FormControl>
       </div>
       <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
-          <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
+          <InputLabel
+            sx={{ color: themeMode === "dark" ? "white" : "" }}
+            id="demo-simple-select-label">
             Choose Font Size
           </InputLabel>
-          <Select
-            sx={style}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            value={fontSize}
-            label="Choose Font Size"
-            onChange={(e) => setFontSize(e.target.value)}>
-            {fontSizes.map((size, i) => (
-              <MenuItem key={i} value={size}>
-                {size}
-              </MenuItem>
-            ))}
-          </Select>
+          {themeMode === "dark" ? (
+            <Select
+              sx={style}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={fontSize}
+              label="Choose Font Size"
+              onChange={(e) => setFontSize(e.target.value)}>
+              {fontSizes.map((size, i) => (
+                <MenuItem key={i} value={size}>
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          ) : (
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={fontSize}
+              label="Choose Font Size"
+              onChange={(e) => setFontSize(e.target.value)}>
+              {fontSizes.map((size, i) => (
+                <MenuItem key={i} value={size}>
+                  {size}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
         </FormControl>
       </div>
-      <div className="md:w-[10rem] w-full flex items-center space-x-1 border-[1px] border-white justify-center rounded-md">
-        {/* <p className="text-white">Theme</p> */}
+      <div className="md:w-[10rem] w-full flex items-center space-x-1 border-[1px] border-gray-300 hover:border-gray-600 dark:border-white justify-center rounded-md">
         <ThemeSwitch setThemeMode={setThemeMode} themeMode={themeMode} />
+      </div>
+      <div className="md:w-[10rem] w-full flex items-center space-x-1 border-[1px] border-gray-300 hover:border-gray-600 dark:border-white justify-center rounded-md">
+        <SoundSwitch
+          setThemeMode={setThemeMode}
+          themeMode={themeMode}
+          setSoundToggle={setSoundToggle}
+        />
       </div>
       <div className="flex space-x-5  md:justify-end">
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => saveCode()}
             disabled={saving || running}
-            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            className="rounded-md w-full dark:text-black text-white bg-gray-700 dark:bg-white py-3 hover:bg-black hover:dark:bg-gray-200 duration-150 transition-all">
             {saving ? "Saving" : "Save"}
           </button>
         </div>
@@ -292,7 +351,7 @@ const RoomHeader = ({
           <button
             onClick={() => runCode()}
             disabled={running || saving}
-            className="rounded-md w-full bg-white py-3 hover:bg-gray-200 duration-150 transition-all">
+            className="rounded-md w-full dark:text-black text-white bg-gray-700 dark:bg-white py-3 hover:bg-black hover:dark:bg-gray-200 duration-150 transition-all">
             {running ? "Running" : "Run"}
           </button>
         </div>

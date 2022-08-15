@@ -22,9 +22,12 @@ import ChatBox from "../utils/ChatBox";
 import NotificationSound from "../Assets/Message_Alert.mp3";
 import JoinSound from "../Assets/Join_Alert.mp3";
 import LeaveSound from "../Assets/Leave_Alert.mp3";
+import { sound } from "../atoms/soundModal";
 const Room = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [soundToggle, setSoundToggle] = useRecoilState(sound);
+  const soundToggleRef = useRef(soundToggle);
   const [messages, setMessages] = useState([]);
   const [running, setRunning] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -61,6 +64,10 @@ const Room = () => {
   const { roomId } = useParams();
   // Loader
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    soundToggleRef.current = soundToggle;
+  }, [soundToggle]);
 
   // Get Room Details from DB and set it to state
   useEffect(() => {
@@ -115,7 +122,10 @@ const Room = () => {
           ACTIONS.JOINED,
           ({ clients, username, socketId }) => {
             if (socketRef.current.id !== socketId) {
-              joinAlertPlayer.current.play();
+              if (soundToggleRef.current) {
+                console.log(soundToggleRef.current);
+                joinAlertPlayer.current.play();
+              }
               toast.info(`${username} joined the room.`);
               console.log(username, language);
               // Sync Clients with other clients
@@ -183,7 +193,9 @@ const Room = () => {
         });
         // Listening for disconnected
         socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
-          leaveAlertPlayer.current.play();
+          if (soundToggleRef.current) {
+            leaveAlertPlayer.current.play();
+          }
           toast.info(`${username} left the room.`);
           setClients((prev) => {
             return prev.filter((client) => client.socketId !== socketId);
@@ -249,13 +261,15 @@ const Room = () => {
 
   useEffect(() => {
     if (messages.length !== 0 && !minimize && !openChat) {
-      messageAlertPlayer.current.play();
+      if (soundToggleRef.current) {
+        messageAlertPlayer.current.play();
+      }
       setOpenChat(true);
       setMinimize(true);
       setNewMessage(true);
     }
   }, [messages]);
-  console.log(messages);
+
   return (
     <>
       {loading ? (
