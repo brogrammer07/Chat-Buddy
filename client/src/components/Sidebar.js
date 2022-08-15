@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { BsChevronCompactRight, BsChevronCompactLeft } from "react-icons/bs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
+import { AiFillSetting } from "react-icons/ai";
+import { ThemeSwitch } from "../utils/Switches";
 
 const Sidebar = ({ users, roomName, setOpenChat }) => {
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -18,7 +20,9 @@ const Sidebar = ({ users, roomName, setOpenChat }) => {
         <div className="">
           <div className=" border-b-[1px] border-[#313131] pb-4">
             <h1 className="font-bold text-[2rem]">Chat Buddy</h1>
-            <p className="text-[#1d90f5]">Room - {roomName}</p>
+            <div className="flex space-x-3 items-center">
+              <p className="text-[#1d90f5]">Room - {roomName}</p>
+            </div>
           </div>
           <div className="py-3 space-y-3">
             <h2 className="font-semibold text-[18px]">Connected</h2>

@@ -64,7 +64,7 @@ const Form = () => {
           <ToastContainer />
           <input
             required
-            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
+            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-formInputPrimary focus:bg-formInputSecondary"
             type="text"
             value={formData.username}
             onChange={(e) =>
@@ -74,7 +74,7 @@ const Form = () => {
           />
           <input
             required
-            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-[#323644] focus:bg-[#5b5b5b]"
+            className="w-[20rem] rounded-xl outline-none px-4 py-2 bg-formInputPrimary focus:bg-formInputSecondary"
             value={formData.roomId}
             onChange={(e) =>
               setFormData({ ...formData, roomId: e.target.value })
@@ -84,14 +84,14 @@ const Form = () => {
           />
           <button
             type="submit"
-            className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all ">
+            className="w-[20rem] bg-buttonPrimary rounded-xl px-4 py-2 font-bold hover:bg-buttonSecondary duration-200 transition-all ">
             Join
           </button>
           <div className="space-x-1 flex">
             <p className="font-thin opacity-80">Don't have Room ID? </p>
             <span
               onClick={() => setIsJoin(false)}
-              className="font-bold text-[#1d90f5] underline cursor-pointer">
+              className="font-bold text-buttonPrimary underline cursor-pointer">
               Create Room
             </span>
           </div>
@@ -124,14 +124,14 @@ const Form = () => {
 
           <button
             type="submit"
-            className="w-[20rem] bg-[#1d90f5] rounded-xl px-4 py-2 font-bold hover:bg-[#146dbc] duration-200 transition-all">
+            className="w-[20rem] bg-buttonPrimary rounded-xl px-4 py-2 font-bold hover:bg-buttonSecondary duration-200 transition-all">
             {loading ? "Creating" : "Create"}
           </button>
           <div className="space-x-1 flex">
             <p className="font-thin opacity-80">Have a Room ID? </p>
             <span
               onClick={() => setIsJoin(true)}
-              className="font-bold text-[#1d90f5] underline cursor-pointer">
+              className="font-bold text-buttonPrimary underline cursor-pointer">
               Join Room
             </span>
           </div>

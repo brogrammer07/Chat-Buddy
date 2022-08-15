@@ -120,15 +120,15 @@ const ChatBox = ({
                   <div className="rounded-full h-[2rem] w-[2rem] bg-red-600 flex items-center justify-center text-white self-end">
                     {message.username.charAt(0)}
                   </div>
-                  <p className="bg-[#4d4d4d] min-w-[3%] max-w-[55%] rounded-xl p-2 text-gray-200">
+                  <p className="bg-[#4d4d4d] min-w-[3%] max-w-[55%] rounded-xl p-2 text-gray-200 break-words">
                     {message.message}
                   </p>
                 </div>
               ) : (
                 <div
                   key={index}
-                  className="flex space-x-2 w-full justify-end  ">
-                  <p className="bg-[#1f5dc1] max-w-[55%]  rounded-xl p-2 text-gray-200 mr-3">
+                  className="flex space-x-2 w-full justify-end overflow-hidden">
+                  <p className="bg-[#1f5dc1] max-w-[55%]  rounded-xl p-2 text-gray-200 mr-3 break-words">
                     {message.message}
                   </p>
                 </div>

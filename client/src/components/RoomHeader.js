@@ -13,6 +13,8 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { ACTIONS } from "../utils/Actions";
+import { ThemeSwitch } from "../utils/Switches";
+import { ThemeContext } from "../utils/ThemeFunction";
 const langauges = Object.entries(allLangauges);
 const themes = [
   "monokai",
@@ -78,6 +80,7 @@ const RoomHeader = ({
   setSaving,
   saving,
 }) => {
+  const { themeMode, setThemeMode } = React.useContext(ThemeContext);
   // Modal states
   const language = useRecoilValue(langaugeState);
   const [theme, setTheme] = useRecoilState(themeState);
@@ -211,7 +214,7 @@ const RoomHeader = ({
   };
 
   return (
-    <div className="flex md:flex-row flex-col text-[#5b5b5b] lg:space-x-16 md:space-x-4 space-y-3 md:space-y-0 px-8 lg:pl-24 py-10 w-full font-semibold text-[1.2rem] bg-[#2c2e3f]">
+    <div className="flex md:flex-row flex-col text-[#5b5b5b] lg:space-x-16 md:space-x-4 space-y-3 md:space-y-0 px-8 lg:pl-24 py-10 w-full font-semibold text-[1.2rem] bg-white  dark:bg-[#2c2e3f]">
       <div className="md:w-[10rem] w-full">
         <FormControl fullWidth>
           <InputLabel sx={{ color: "white" }} id="demo-simple-select-label">
@@ -272,7 +275,11 @@ const RoomHeader = ({
           </Select>
         </FormControl>
       </div>
-      <div className="flex space-x-5 md:w-[50%] w-full md:justify-end">
+      <div className="md:w-[10rem] w-full flex items-center space-x-1 border-[1px] border-white justify-center rounded-md">
+        {/* <p className="text-white">Theme</p> */}
+        <ThemeSwitch setThemeMode={setThemeMode} themeMode={themeMode} />
+      </div>
+      <div className="flex space-x-5  md:justify-end">
         <div className="md:w-[10rem] w-full">
           <button
             onClick={() => saveCode()}
