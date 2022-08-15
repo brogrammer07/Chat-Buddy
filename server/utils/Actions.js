@@ -7,6 +7,7 @@ export const ACTIONS = {
   OUTPUT_CHANGE: "output-change",
   LANGUAGE_CHANGE: "langauge-change",
   SYNC_CODE: "sync-code",
+  SYNC_MESSAGE: "sync-message",
   SAVE: "save",
   STOP_SAVING: "stop-saving",
   START_SAVING: "start-saving",

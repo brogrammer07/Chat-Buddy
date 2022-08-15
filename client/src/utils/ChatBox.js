@@ -19,6 +19,7 @@ const ChatBox = ({
   setMinimize,
   setNewMessage,
   newMessage,
+  messagesRef,
 }) => {
   const [message, setMessage] = useState("");
   const [typing, setTyping] = useState("");
@@ -36,6 +37,13 @@ const ChatBox = ({
       socketId: socketRef.current.id,
       username,
     });
+    let data = [...messages];
+    data.push({
+      message,
+      username,
+      socketId: socketRef.current.id,
+    });
+    messagesRef.current = data;
     setMessages((list) => [
       ...list,
       { message, socketId: socketRef.current.id, username },

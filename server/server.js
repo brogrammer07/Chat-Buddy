@@ -99,12 +99,21 @@ io.on("connection", (socket) => {
   // Sync Code Event
   socket.on(
     ACTIONS.SYNC_CODE,
-    ({ socketId, body, input, output, language }) => {
-      console.log("Sync Change", body, input, output, language, socketId);
+    ({ socketId, body, input, output, language, messages }) => {
+      console.log(
+        "Sync Change",
+        body,
+        input,
+        output,
+        language,
+        socketId,
+        messages
+      );
       io.to(socketId).emit(ACTIONS.BODY_CHANGE, { body });
       io.to(socketId).emit(ACTIONS.INPUT_CHANGE, { input });
       io.to(socketId).emit(ACTIONS.OUTPUT_CHANGE, { output });
       io.to(socketId).emit(ACTIONS.LANGUAGE_CHANGE, { language });
+      io.to(socketId).emit(ACTIONS.SYNC_MESSAGE, { messages });
     }
   );
 

@@ -48,11 +48,13 @@ const Room = () => {
   const bodyRef = useRef(null);
   const inputRef = useRef(null);
   const outputRef = useRef(null);
+  const messagesRef = useRef(null);
   // Ref Assignings
   languageRef.current = language;
   bodyRef.current = body;
   inputRef.current = input;
   outputRef.current = output;
+  messagesRef.current = messages;
   // Socket Connection and Initialization
   const socketRef = useRef(null);
   const [clients, setClients] = useState([]);
@@ -122,6 +124,7 @@ const Room = () => {
                 input: inputRef.current,
                 output: outputRef.current,
                 language: languageRef.current,
+                messages: messagesRef.current,
                 socketId,
               });
             }
@@ -168,9 +171,15 @@ const Room = () => {
         });
         // Listening for Message event
         socketRef.current.on(ACTIONS.RECEIVE_MESSAGE, (data) => {
+          let temp = [...messages];
+          temp.push(data);
+          messagesRef.current = temp;
           setMessages((list) => [...list, data]);
           setIsTyping(false);
-          console.log(data);
+        });
+        // Listening for Message sync event
+        socketRef.current.on(ACTIONS.SYNC_MESSAGE, (data) => {
+          setMessages(data.messages);
         });
         // Listening for disconnected
         socketRef.current.on(ACTIONS.DISCONNECTED, ({ socketId, username }) => {
@@ -276,6 +285,7 @@ const Room = () => {
               setMinimize={setMinimize}
               newMessage={newMessage}
               setNewMessage={setNewMessage}
+              messagesRef={messagesRef}
             />
           )}
           <RoomHeader
